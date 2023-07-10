@@ -55,7 +55,7 @@ class _KuAppBarState extends State<KuAppBar> {
                   right: 10,
                   child: Image.asset(
                     "assets/kuuuu/${widget.kuPath}",
-                    height: 250,
+                    height: size.height*0.3,
                   ),
                 )
               ],

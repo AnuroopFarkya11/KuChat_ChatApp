@@ -11,6 +11,7 @@ class KuFormField extends StatefulWidget {
   final bool obscureText;
   final Widget? suffixIcon;
   final FocusNode? focusNode;
+  final int maxLines;
 
   const KuFormField({
     Key? key,
@@ -23,6 +24,7 @@ class KuFormField extends StatefulWidget {
     this.suffixIcon,
     this.focusNode,
     this.obscureText = false,
+    this.maxLines = 1
 
   }) : super(key: key);
 
@@ -41,6 +43,7 @@ class _KuFormFieldState extends State<KuFormField> {
           focusNode: widget.focusNode,
           cursorColor: Colors.white,
           keyboardType: TextInputType.text,
+          maxLines: widget.maxLines,
           style: GoogleFonts.poppins(color: Colors.white),
           obscureText: widget.obscureText,
           decoration: InputDecoration(

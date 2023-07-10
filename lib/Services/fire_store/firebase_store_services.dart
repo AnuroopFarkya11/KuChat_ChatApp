@@ -1,7 +1,8 @@
 import 'dart:developer';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 import 'package:flutter/material.dart';
 import 'package:kuchat/Services/auth/firebase_auth_services.dart';
 import 'package:kuchat/Widgets/snack_bar.dart';
@@ -112,7 +113,7 @@ class FireStoreServices {
         "receiverUID": receiverMap["UserID"],
         "time": time,
         "archived": false,
-        "blocked":false
+        "blocked": false
       });
     } on FirebaseException catch (e) {
       log("Sender message error : ${e.toString()}");
@@ -131,7 +132,7 @@ class FireStoreServices {
         "receiverUID": senderMap["senderUid"],
         "time": time,
         "archived": false,
-        "blocked":false
+        "blocked": false
       });
     } on FirebaseException catch (e) {
       log("Receiver message error : ${e.toString()}");
@@ -187,7 +188,7 @@ class FireStoreServices {
     }
   }
 
-  void updateArchiveStatus(receiverUID,status) async {
+  void updateArchiveStatus(receiverUID, status) async {
     String uid = _authService.getCurrentUserUID();
 
     try {
@@ -198,11 +199,11 @@ class FireStoreServices {
           .doc(receiverUID)
           .update({"archived": status});
     } on FirebaseException catch (e) {
-
       // TODO
     }
   }
-  void updateBlockedStatus(receiverUID,status) async {
+
+  void updateBlockedStatus(receiverUID, status) async {
     String uid = _authService.getCurrentUserUID();
     log("Receiver UID $receiverUID");
 
@@ -214,8 +215,28 @@ class FireStoreServices {
           .doc(receiverUID)
           .update({"blocked": status});
     } on FirebaseException catch (e) {
-log(e.message.toString());
+      log(e.message.toString());
       // TODO
     }
+  }
+
+  Future<bool> sendRequestHelp(String currentUID, String request) async {
+    var time = DateTime.now();
+    log(time.toLocal().toString());
+    try {
+      await _fireStore
+          .collection("KuChatsUsers")
+          .doc(currentUID)
+          .collection("Support").doc(time.toString()).set({
+        "request":request
+      });
+
+      return true;
+    } on FirebaseException catch (e) {
+
+      log("Send help request status: ${e.message.toString()}");
+
+    }
+    return false;
   }
 }

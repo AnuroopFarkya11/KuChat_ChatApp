@@ -112,7 +112,7 @@ class _KuDrawerState extends State<KuDrawer> {
               title: "Settings",
               onTap: () {
                 selectedTile(4);
-                Navigator.pushReplacementNamed(context, '/SettingsScreen');
+                Navigator.pushReplacementNamed(context, '/SettingScreen');
               },
               index: 4),
           listItem(
@@ -120,29 +120,30 @@ class _KuDrawerState extends State<KuDrawer> {
               title: "Help or Support",
               onTap: () {
                 selectedTile(5);
+                Navigator.pushReplacementNamed(context, "/HelpAndSupportScreen");
               },
               index: 5),
-          listItem(
+/*          listItem(
               leading: Icons.feedback,
               title: "Feedback or Report",
               onTap: () {
                 selectedTile(6);
               },
-              index: 6),
+              index: 6),*/
           listItem(
               leading: Icons.logout_outlined,
               title: "Logout",
               onTap: () {
-                selectedTile(7);
+                selectedTile(6);
               },
-              index: 7),
+              index: 6),
           listItem(
               leading: Icons.adb,
               title: "About Developer",
               onTap: () {
-                selectedTile(8);
+                selectedTile(7);
               },
-              index: 8),
+              index: 7),
         ],
       ),
     );

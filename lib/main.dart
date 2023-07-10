@@ -6,6 +6,7 @@ import 'package:kuchat/Screens/add_member_screen/add_members_screen.dart';
 import 'package:kuchat/Screens/chat_screen/chat_screen_logic.dart';
 import 'package:kuchat/Screens/drawer_screens/archive_chat_screen/archive_chat_screen.dart';
 import 'package:kuchat/Screens/drawer_screens/blocked_users_screen/blocked_users_screen.dart';
+import 'package:kuchat/Screens/drawer_screens/help_support_screen/help_support_screen.dart';
 import 'package:kuchat/Screens/drawer_screens/settings_screen/settings_screen.dart';
 import 'package:kuchat/Screens/no_internet_Screen/no_internet_screen.dart';
 import 'package:kuchat/Screens/splash_screen/splash_screen.dart';
@@ -55,7 +56,9 @@ class KuApp extends StatelessWidget {
         "/ChatScreen":(context)=>const ChatScreen(),
         "/CurrentProfileScreen":(context)=>const CurrentUserProfileScreen(),
         "/ArchiveChatScreen":(context)=>const ArchiveChatScreen(),
-        "/BlockedUsersScreen":(context)=>const BlockedUsersScreen()
+        "/BlockedUsersScreen":(context)=>const BlockedUsersScreen(),
+        "/HelpAndSupportScreen":(context)=>HelpSupportScreen(),
+        "/SettingScreen":(context)=>const SettingScreen()
       },
     );
   }
