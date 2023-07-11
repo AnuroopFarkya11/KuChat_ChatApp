@@ -100,6 +100,7 @@ class FireStoreServices {
     String senderUid = senderMap["senderUid"];
     log(senderUid);
 
+    // Sender Recent chat record
     try {
       await _fireStore
           .collection('KuChatsUsers')
@@ -108,6 +109,7 @@ class FireStoreServices {
           .doc(receiverMap["UserID"])
           .set({
         "lastMessage": message,
+        "lastMessageStatus":false,
         "receivedBy": receiverMap["Name"],
         "receiverPhoto": receiverMap["ProfilePictureURL"],
         "receiverUID": receiverMap["UserID"],
@@ -119,6 +121,8 @@ class FireStoreServices {
       log("Sender message error : ${e.toString()}");
     }
 
+
+    // Receiver Recent chat record
     try {
       await _fireStore
           .collection('KuChatsUsers')
@@ -239,4 +243,23 @@ class FireStoreServices {
     }
     return false;
   }
+
+  Future setActiveStatus(bool status)async{
+    await _fireStore.collection("KuChatsUsers").doc(_authService.getCurrentUserUID()).update({"activityStatus":status});
+  }
+
+ Future updateLastMessageStatus(senderUID,receiverUID,bool status)async{
+
+   await _fireStore
+       .collection('KuChatsUsers')
+       .doc(senderUID)
+       .collection('RecentChats')
+       .doc(receiverUID).update({"lastMessageStatus":status});
+
+ }
+
+
+
+
+
 }

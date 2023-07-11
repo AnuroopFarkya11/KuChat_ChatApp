@@ -1,5 +1,6 @@
 import 'dart:developer';
 import 'dart:io';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as http;
 import 'package:cached_network_image/cached_network_image.dart';
@@ -22,7 +23,8 @@ class HomeScreen extends StatefulWidget {
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
+class _HomeScreenState extends State<HomeScreen>
+    with TickerProviderStateMixin, WidgetsBindingObserver {
   late String url = "";
   late String uid = "";
   late String currentUID = "";
@@ -38,9 +40,15 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   void initState() {
     // TODO: implement initState
     super.initState();
-    url = context.read<UserModel>().downloadUrl;
-    uid = context.read<UserModel>().userId;
-    currentUID = context.read<UserModel>().userId;
+    url = context
+        .read<UserModel>()
+        .downloadUrl;
+    uid = context
+        .read<UserModel>()
+        .userId;
+    currentUID = context
+        .read<UserModel>()
+        .userId;
 
     log("Home Screen init");
     // currentUID = context.read<UserModel>().userId;
@@ -49,6 +57,22 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
         duration: const Duration(milliseconds: 1000), vsync: this);
 
     getImageFileFromUrl();
+
+    WidgetsBinding.instance!.addObserver(this);
+    _storeServices.setActiveStatus(true);
+  }
+
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    super.didChangeAppLifecycleState(state);
+    if (state == AppLifecycleState.resumed) {
+      _storeServices.setActiveStatus(true);
+    }
+    else {
+      log("I am called while navigating");
+      _storeServices.setActiveStatus(false);
+    }
   }
 
   getImageFileFromUrl() async {
@@ -81,8 +105,18 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   }
 
   @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    // _storeServices.setActiveStatus(false);
+    log("HomeScreen dispose");
+  }
+
+  @override
   Widget build(BuildContext context) {
-    Size size = MediaQuery.of(context).size;
+    Size size = MediaQuery
+        .of(context)
+        .size;
     final fadeAnimation = CurvedAnimation(
       parent: animationController,
       curve: Curves.easeIn,
@@ -105,8 +139,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
               IconButton(
                   onPressed: () async {
                     await _authService.signOutUser(context)
-                        ? Navigator.pushReplacementNamed(
-                            context, '/SignInScreen')
+                        ? Navigator.pushNamedAndRemoveUntil(context, '/SignInScreen', (route) => false)
                         : null;
                   },
                   icon: const Icon(Icons.logout_outlined)),
@@ -117,7 +150,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
             flexibleSpace: FlexibleSpaceBar(
               // centerTitle: true,
               titlePadding:
-                  const EdgeInsets.only(left: 10, bottom: 10, right: 10),
+              const EdgeInsets.only(left: 10, bottom: 10, right: 10),
               background: ShaderMask(
                   blendMode: BlendMode.hardLight,
                   shaderCallback: (Rect bounds) {
@@ -129,15 +162,15 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                   },
                   child: imageDownloaded
                       ? FadeTransition(
-                          opacity: fadeAnimation,
-                          child: Image.file(
-                            userProfileFile,
-                            fit: BoxFit.fitWidth,
-                          ))
+                      opacity: fadeAnimation,
+                      child: Image.file(
+                        userProfileFile,
+                        fit: BoxFit.fitWidth,
+                      ))
                       : Image.asset(
-                          "assets/wallpaper.jpg",
-                          fit: BoxFit.fill,
-                        )),
+                    "assets/wallpaper.jpg",
+                    fit: BoxFit.fill,
+                  )),
               title: Text(
                 "Chats",
                 textAlign: TextAlign.start,
@@ -256,89 +289,120 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
         itemExtent: 85);
   }
 
-  getUserTile(
-      AsyncSnapshot<QuerySnapshot<Object?>> snapshot, BuildContext context) {
+  getUserTile(AsyncSnapshot<QuerySnapshot<Object?>> snapshot,
+      BuildContext context) {
     return snapshot.data!.docs
-        .map((doc) => ListTile(
-              // minVerticalPadding: 25.0,
+        .map((doc) =>
+        ListTile(
+          // minVerticalPadding: 25.0,
 
-              leading: CircleAvatar(
-                radius: 25,
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(55),
-                  child: CachedNetworkImage(
-                    imageUrl: doc["receiverPhoto"],
-                    height: 60,
-                    fit: BoxFit.fill,
-                    width: 60,
-                    placeholder: (context, val) {
-                      return CircleAvatar(
-                          backgroundColor: Colors.white70,
-                          backgroundImage: Image.asset(
-                            "assets/kuuuu/hello.png",
-                            fit: BoxFit.fitWidth,
-                          ).image);
-                    },
-                  ),
-                ),
+          leading: CircleAvatar(
+            radius: 25,
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(55),
+              child: CachedNetworkImage(
+                imageUrl: doc["receiverPhoto"],
+                height: 60,
+                fit: BoxFit.fill,
+                width: 60,
+                placeholder: (context, val) {
+                  return CircleAvatar(
+                      backgroundColor: Colors.white70,
+                      backgroundImage: Image
+                          .asset(
+                        "assets/kuuuu/hello.png",
+                        fit: BoxFit.fitWidth,
+                      )
+                          .image);
+                },
               ),
-              /*CircleAvatar(
+            ),
+          ),
+          /*CircleAvatar(
 
                     backgroundImage: Image.network(doc["receiverPhoto"]).image,
                     radius: 25,
                   )*/
-              title: Text(
-                doc["receivedBy"],
-                style: GoogleFonts.poppins(color: Colors.white),
-              ),
-              subtitle: Text(
-                doc["lastMessage"],
-                style: GoogleFonts.poppins(color: Colors.white30),
-                softWrap: true,
-                maxLines: 1,
-              ),
-              onTap: () {
-                leadToUser(context, doc["receiverUID"]);
-              },
-              onLongPress: () {
-                showDialog(
-                    useSafeArea: true,
-                    context: context,
-                    builder: (context) {
-                      return SimpleDialog(
-                        children: [
-                          ListTile(
-                            leading: const Icon(Icons.archive_outlined),
-                            title: Text("Archive ${doc["receivedBy"]}"),
-                            iconColor: AppColor.kuWhite70,
-                            textColor: AppColor.kuWhite70,
-                            onTap: () {
-                              _storeServices.updateArchiveStatus(
-                                  doc["receiverUID"], true);
-                              Navigator.of(context).pop();
-                            },
-                          ),
-                          const Divider(
-                            color: AppColor.kuWhite,
-                            indent: 65,
-                            endIndent: 65,
-                          ),
-                          ListTile(
-                            leading: const Icon(Icons.block),
-                            title: Text("Block ${doc["receivedBy"]}"),
-                            iconColor: AppColor.kuRed,
-                            textColor: AppColor.kuWhite70,
-                            onTap: () {
-                              _storeServices.updateBlockedStatus(
-                                  doc["receiverUID"], true);
-                              Navigator.pop(context);
-                            },
-                          ),
-                        ],
-                      );
-                    });
-              },
-            ))
+          title: Text(
+            doc["receivedBy"],
+            style: GoogleFonts.poppins(color: Colors.white),
+          ),
+          subtitle: Text(
+            doc["lastMessage"],
+            style: GoogleFonts.poppins(color: Colors.white30),
+            softWrap: true,
+            maxLines: 1,
+          ),
+          trailing: StreamBuilder(
+            stream: FirebaseFirestore.instance.collection("KuChatsUsers").doc(
+                doc["receiverUID"]).snapshots(), builder: (context, snapshot) {
+              if(snapshot.hasData)
+                {
+                  bool activeStatus = snapshot.data!["activityStatus"];
+                  if(activeStatus)
+                    {
+                      return Text("🟢");
+                    }
+                  else
+                    {
+                      return  Text("🔴");
+                    }
+                }
+              else if(snapshot.hasError)
+                {
+                  return Text("🔴");
+                }else if(snapshot.connectionState==ConnectionState.waiting)
+                  {
+                   return Text("🔴");
+
+                  }
+              return Text("🔴");
+
+
+          },),
+          onTap: () async {
+            // await FireStoreServices().checkStatus(doc["receiverUID"]);
+            leadToUser(context, doc["receiverUID"]);
+          },
+          onLongPress: () {
+            showDialog(
+                useSafeArea: true,
+                context: context,
+                builder: (context) {
+                  return SimpleDialog(
+                    children: [
+                      ListTile(
+                        leading: const Icon(Icons.archive_outlined),
+                        title: Text("Archive ${doc["receivedBy"]}"),
+                        iconColor: AppColor.kuWhite70,
+                        textColor: AppColor.kuWhite70,
+                        onTap: () {
+                          _storeServices.updateArchiveStatus(
+                              doc["receiverUID"], true);
+                          Navigator.of(context).pop();
+                        },
+                      ),
+                      const Divider(
+                        color: AppColor.kuWhite,
+                        indent: 65,
+                        endIndent: 65,
+                      ),
+                      ListTile(
+                        leading: const Icon(Icons.block),
+                        title: Text("Block ${doc["receivedBy"]}"),
+                        iconColor: AppColor.kuRed,
+                        textColor: AppColor.kuWhite70,
+                        onTap: () {
+                          _storeServices.updateBlockedStatus(
+                              doc["receiverUID"], true);
+                          Navigator.pop(context);
+                        },
+                      ),
+                    ],
+                  );
+                });
+          },
+        ))
         .toList();
   }
 
@@ -355,8 +419,12 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   }
 
   String chatRoomID(String user1, String user2) {
-    if (user1[0].toLowerCase().codeUnits[0] >
-        user2[0].toLowerCase().codeUnits[0]) {
+    if (user1[0]
+        .toLowerCase()
+        .codeUnits[0] >
+        user2[0]
+            .toLowerCase()
+            .codeUnits[0]) {
       return '$user1$user2';
     } else {
       return '$user2$user1';

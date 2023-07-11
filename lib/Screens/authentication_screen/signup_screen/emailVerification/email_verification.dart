@@ -1,3 +1,6 @@
+import 'dart:async';
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:kuchat/Screens/authentication_screen/AuthWidgets/bottom_nav_button.dart';
 import 'package:kuchat/Services/auth/firebase_auth_services.dart';
@@ -98,7 +101,12 @@ class _SignUpEmailVerificationState extends State<SignUpEmailVerification> {
         ],
       ),
       bottomNavigationBar: BottomButton(
-        onPressed: () {},
+        onPressed: () {
+          //todo add a timer in next update
+          _authService.resendMail(context);
+
+
+        },
         text: "Have not received the mail yet?",
       ),
     );

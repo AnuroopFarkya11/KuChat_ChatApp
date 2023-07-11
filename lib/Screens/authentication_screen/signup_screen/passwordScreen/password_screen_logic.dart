@@ -56,6 +56,10 @@ class PasswordScreenLogic{
         }
       });
     }
+    else{
+      isLoading = false;
+      updateState();
+    }
   }
 
 

@@ -9,8 +9,9 @@ class TitleText extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    Size size = MediaQuery.of(context).size;
     return Text(text,
         style: TextStyle(
-            fontSize: 22, fontWeight: FontWeight.w500,color:textColor ));
+            fontSize: size.height*0.025, fontWeight: FontWeight.w500,color:textColor ));
   }
 }

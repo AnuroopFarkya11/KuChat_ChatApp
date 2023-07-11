@@ -20,7 +20,8 @@ class ChangePasswordManager {
   final TextEditingController existingPasswordController =
       TextEditingController();
 
-  bool _isVisible = false;
+  bool _isExistingPassVisible = false;
+  bool _isNewPassPassVisible = false;
 
   bool _isLoading = false;
 
@@ -78,13 +79,13 @@ class ChangePasswordManager {
                       labelText: "Existing Password",
                       formKey: _existingPasswordKey,
                       textFormController: existingPasswordController,
-                      obscureText: !_isVisible,
+                      obscureText: !_isExistingPassVisible,
                       suffixIcon: IconButton(
-                        icon: _isVisible
+                        icon: _isExistingPassVisible
                             ? const Icon(Icons.visibility_off)
                             : const Icon(Icons.visibility),
                         onPressed: () {
-                          _isVisible = !_isVisible;
+                          _isExistingPassVisible = !_isExistingPassVisible;
                           setState(() {});
                         },
                       ),
@@ -156,7 +157,7 @@ class ChangePasswordManager {
                         labelText: "Password",
                         formKey: _passwordKey,
                         textFormController: passwordController,
-                        obscureText: !_isVisible,
+                        obscureText: !_isNewPassPassVisible,
                         formOnTap: () {
                           _existingPasswordKey.currentState!.validate();
                         },
@@ -168,11 +169,11 @@ class ChangePasswordManager {
                           return null;
                         },
                         suffixIcon: IconButton(
-                          icon: _isVisible
+                          icon: _isNewPassPassVisible
                               ? const Icon(Icons.visibility_off)
                               : const Icon(Icons.visibility),
                           onPressed: () {
-                            _isVisible = !_isVisible;
+                            _isNewPassPassVisible = !_isNewPassPassVisible;
                             setState(() {});
                           },
                         )),

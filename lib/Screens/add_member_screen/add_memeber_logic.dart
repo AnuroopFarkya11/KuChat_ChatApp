@@ -2,6 +2,7 @@ import 'dart:developer';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:kuchat/Utils/theme_color/app_colors.dart';
 
 class AddMemberLogic{
   late String currentUID = "";
@@ -38,9 +39,9 @@ class AddMemberLogic{
           ),
         ),
       ),
-      title: Text(doc["Name"],style: const TextStyle(color: Colors.white),),
-      subtitle: Text(doc["userBio"],style: const TextStyle(color: Colors.white)),
-      trailing: const Icon(Icons.message_outlined,color: Colors.white,),
+      title: Text(doc["Name"],style: const TextStyle(color: AppColor.kuWhite),),
+      subtitle: Text(doc["userBio"],style: const TextStyle(color: Colors.white54)),
+      trailing: const Icon(Icons.add,color: Colors.white,size:20),
       onTap: () {
         // NEXT USER KI UID PASS KR RHA
         leadToUser(context, doc.data());

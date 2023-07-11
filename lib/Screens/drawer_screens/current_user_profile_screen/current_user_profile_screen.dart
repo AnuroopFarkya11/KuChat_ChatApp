@@ -51,14 +51,12 @@ class _CurrentUserProfileScreenState extends State<CurrentUserProfileScreen>
             actions: [
               IconButton(
                   onPressed: ()async {
-
-                   String image = await getImage.getImageSource();
-                   log(image);
+                    await getImage.getImageSource();
                   },
                   icon: const Icon(Icons.edit))
             ],
             flexibleSpace: FlexibleSpaceBar(
-              background: loadingImage
+              background: CurrentUserProfileScreenLogic.loadingImage
                   ? const Center(
                       child: CircularProgressIndicator(
                       color: AppColor.kuWhite,
@@ -75,8 +73,8 @@ class _CurrentUserProfileScreenState extends State<CurrentUserProfileScreen>
                       // todo 1
                       child: CachedNetworkImage(
                         placeholderFadeInDuration: const Duration(seconds: 2),
-                        fadeOutDuration: const Duration(seconds: 5),
-                        fadeInDuration: const Duration(seconds: 10),
+                        fadeOutDuration: const Duration(seconds: 2),
+                        fadeInDuration: const Duration(seconds: 5),
                         imageUrl: url,
                         fit: BoxFit.fitWidth,
                         errorWidget: (context, url, error) => Image.asset(

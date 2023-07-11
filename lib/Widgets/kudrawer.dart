@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:kuchat/Services/auth/firebase_auth_services.dart';
 import 'package:kuchat/Utils/theme_color/app_colors.dart';
 
 class KuDrawer extends StatefulWidget {
@@ -84,6 +85,13 @@ class _KuDrawerState extends State<KuDrawer> {
               title: "Profile",
               onTap: () {
                 selectedTile(1);
+                
+
+               /* Navigator.pop(context);
+                Navigator.pushNamedAndRemoveUntil(context, '/CurrentProfileScreen', (route){
+                  selectedTileIndex =0;
+                  return true;
+                });*/
                 Navigator.pushReplacementNamed(
                     context, '/CurrentProfileScreen');
                 // Navigator.pop(context);
@@ -135,6 +143,14 @@ class _KuDrawerState extends State<KuDrawer> {
               title: "Logout",
               onTap: () {
                 selectedTile(6);
+                Navigator.of(context).pop();
+                FirebaseAuthService().signOutUser(context).then((bool res){
+                  if(res)
+                    {
+                      Navigator.pushNamedAndRemoveUntil(context, "/SignInScreen", (route) => false);
+                      selectedTileIndex =0;
+                    }
+                });
               },
               index: 6),
           listItem(
@@ -142,6 +158,7 @@ class _KuDrawerState extends State<KuDrawer> {
               title: "About Developer",
               onTap: () {
                 selectedTile(7);
+                Navigator.pushReplacementNamed(context, "/AboutDeveloperScreen");
               },
               index: 7),
         ],

@@ -5,17 +5,12 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:kuchat/Widgets/snack_bar.dart';
 
-class FirebaseStorageServices{
-
-
-
+class FirebaseStorageServices {
   final FirebaseStorage _firebaseStorage = FirebaseStorage.instance;
-
-
 
   Future<String> uploadProfile(
       {required String imagePath, required String imageName}) async {
-    String imageUrl="";
+    String imageUrl = "";
 
     // REFERENCE TO THE PROFILE IMAGE FOLDER
     Reference profileFolderRef = _firebaseStorage.ref('ProfileImages');
@@ -25,17 +20,18 @@ class FirebaseStorageServices{
 
     // uploading
     try {
-      await imageREf.putFile(File(imagePath));
+
+        await imageREf.putFile(File(imagePath));
+        log("Google FireStorage Status: FILE UPLOADED!");
+
     } on FirebaseException catch (e) {
       log("USER PROFILE UPLOAD STATUS: ${e.message}");
-
     }
 
     try {
       imageUrl = await imageREf.getDownloadURL();
-
     } on FirebaseException catch (e) {
-      // TODO
+      log("FETCHING IMAGE URL STATUS: ${e.message.toString()}");
     }
 
     return imageUrl;

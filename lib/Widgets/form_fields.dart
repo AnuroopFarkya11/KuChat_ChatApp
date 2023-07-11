@@ -35,25 +35,35 @@ class KuFormField extends StatefulWidget {
 class _KuFormFieldState extends State<KuFormField> {
   @override
   Widget build(BuildContext context) {
-    return Form(
-        // todo
-        key: widget.formKey,
-        child: TextFormField(
-          controller: widget.textFormController,
-          focusNode: widget.focusNode,
-          cursorColor: Colors.white,
-          keyboardType: TextInputType.text,
-          maxLines: widget.maxLines,
-          style: GoogleFonts.poppins(color: Colors.white),
-          obscureText: widget.obscureText,
-          decoration: InputDecoration(
-            labelText: widget.labelText,
-            suffixIcon: widget.suffixIcon
-          ),
-          onTap: widget.formOnTap,
-          onChanged: widget.formOnChanged,
-          validator: widget.formValidator,
+    Size size = MediaQuery.of(context).size;
+    return Container(
+      constraints: BoxConstraints(
+        maxHeight: size.height*0.1,
+        minHeight: size.height*0.08
 
-        ));
+      ),
+      // height: size.height*0.1,
+      child: Form(
+          // todo
+          key: widget.formKey,
+          child: TextFormField(
+
+            controller: widget.textFormController,
+            focusNode: widget.focusNode,
+            cursorColor: Colors.white,
+            keyboardType: TextInputType.text,
+            maxLines: widget.maxLines,
+            style: GoogleFonts.poppins(color: Colors.white),
+            obscureText: widget.obscureText,
+            decoration: InputDecoration(
+              labelText: widget.labelText,
+              suffixIcon: widget.suffixIcon
+            ),
+            onTap: widget.formOnTap,
+            onChanged: widget.formOnChanged,
+            validator: widget.formValidator,
+
+          )),
+    );
   }
 }

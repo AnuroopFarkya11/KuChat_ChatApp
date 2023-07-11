@@ -22,7 +22,7 @@ class CurrentUserProfileScreenLogic{
   final _changeUserNameKey = GlobalKey<FormState>();
 
   late final GetImage getImage;
-  bool loadingImage = false;
+  static bool loadingImage = false;
 
 
   final FireStoreServices _storeServices = FireStoreServices();

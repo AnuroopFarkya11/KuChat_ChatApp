@@ -1,12 +1,15 @@
 import 'dart:ui';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:kuchat/Screens/authentication_screen/AuthWidgets/bottom_nav_button.dart';
+import 'package:kuchat/Services/auth/firebase_auth_services.dart';
 import 'package:kuchat/Widgets/form_fields.dart';
 import 'package:kuchat/Screens/authentication_screen/signin_screen/signIn_screen_logic.dart';
 import 'package:kuchat/Widgets/custom_elevated_button.dart';
 
 import '../../../Widgets/appbar.dart';
+import '../../../Widgets/snack_bar.dart';
 import '../../../Widgets/subtitle_text.dart';
 import '../../../Widgets/title_text.dart';
 
@@ -46,6 +49,7 @@ class _SignInScreenState extends State<SignInScreen> with SignInScreenLogic {
           const KuAppBar(
             kuTitle: "Sign In",
             kuPath: "hello.png",
+            autoLead: false,
           ),
           SliverFillRemaining(
             hasScrollBody: false,
@@ -56,7 +60,7 @@ class _SignInScreenState extends State<SignInScreen> with SignInScreenLogic {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   const SizedBox(
-                    height: 30,
+                    height: 20,
                   ),
                   const TitleText(text:"Heyyyyyyiieee!!!!!" ),
                   const SubTitleText(text: "Welcomeeeee Backkkk!! I was eagerly waiting for youuu!"),
@@ -152,6 +156,7 @@ class _SignInScreenState extends State<SignInScreen> with SignInScreenLogic {
         useRootNavigator: true,
         useSafeArea: true,
         context: context,
+
         shape: const RoundedRectangleBorder(
             borderRadius: BorderRadius.only(
                 topLeft: Radius.circular(40), topRight: Radius.circular(40))),
@@ -191,6 +196,7 @@ class _SignInScreenState extends State<SignInScreen> with SignInScreenLogic {
                       controller: _emailForgotPasswordCOntroller,
                       onTap: () {
                         // _emailKey.currentState!.validate();
+                        // _emailForgotPasswordKey.currentState!.validate();
                       },
                       validator: (value) {
                         //todo
@@ -235,13 +241,13 @@ class _SignInScreenState extends State<SignInScreen> with SignInScreenLogic {
                         _isLoading = true;
                         setState(() {});
 
-                        /*await userForgotPassword(userEmail: _emailForgotPasswordCOntroller.text).then((value){
+                        await FirebaseAuthService().userForgotPassword(userEmail: _emailForgotPasswordCOntroller.text).then((value){
                           _emailForgotPasswordCOntroller.clear();
                           Navigator.of(context).pop();
                           showSnackBar(context, value.toString());
 
 
-                        });*/
+                        });
                       }
                     },
                     child: _isLoading

@@ -4,6 +4,8 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:kuchat/Screens/drawer_screens/current_user_profile_screen/current_user_profile_screen.dart';
+import 'package:kuchat/Screens/drawer_screens/current_user_profile_screen/current_user_profile_screen_logic.dart';
 import 'package:kuchat/Widgets/snack_bar.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
@@ -28,7 +30,7 @@ class GetImage {
   final FirebaseStorageServices _storageServices = FirebaseStorageServices();
   final FireStoreServices _storeServices = FireStoreServices();
 
-  Future<String> getImageSource() async{
+  Future getImageSource() async{
     String imagePath = "";
     showModalBottomSheet(
         context: context,
@@ -56,15 +58,24 @@ class GetImage {
                     children: [
                       InkWell(
                         onTap: () async {
-                          imagePath = await selectImageFromGallery();
+                         try {
+                           await selectImageFromGallery().then((imagePath)async{
+                             if (imagePath.isNotEmpty) {
+                               log("Select GalleryImage Status: $imagePath");
+                               CurrentUserProfileScreenLogic.loadingImage = true;
+                               Navigator.of(context).pop();
+                               setState();
+                               pushPictureToStorage(imagePath);
 
-                          /*if (imagePath.isNotEmpty) {
-                            Navigator.of(context).pop();
-                            log(imagePath);
-                            setState();
-                          } else {
-                            showSnackBar(context, "An error occured.");
-                          }*/
+                             } else {
+                               showSnackBar(context, "An error occurred.");
+                             }
+                           });
+                         } on Exception catch (e) {
+                           log("Select GalleryImage Status:${e.toString()}");
+                         }
+
+
                         },
                         child: const CircleAvatar(
                           backgroundColor: AppColor.kuGrey,
@@ -122,10 +133,13 @@ class GetImage {
           );
         }
         );
-    return imagePath;
+    if(imagePath.isNotEmpty)
+      {
+        return imagePath;
+      }
   }
 
-  selectImageFromGallery() async {
+  Future selectImageFromGallery() async {
     ImagePicker picker = ImagePicker();
     XFile? file = await picker.pickImage(source: ImageSource.gallery);
 
@@ -219,10 +233,21 @@ class GetImage {
         });
       } on Exception catch (e) {
         showSnackBar(
-            context, "An error occured.Please try again");
+            context, "An error occurred.Please try again");
       }
       setState();
     }
+  }
+
+  void pushPictureToStorage(imagePath) async{
+    String currentUid = context.read<UserModel>().userId;
+
+     await FirebaseStorageServices().uploadProfile(imagePath: imagePath, imageName:currentUid).whenComplete((){
+                                 showSnackBar(context, "Profile updated successfully!");
+                                 CurrentUserProfileScreenLogic.loadingImage=false;
+                                 setState();
+                               });
+
   }
 }
 /*BottomSheet(

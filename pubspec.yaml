@@ -50,6 +50,7 @@ dependencies:
   http: ^0.13.4
   connectivity_plus: ^4.0.1
   internet_connection_checker: ^1.0.0+1
+  url_launcher: ^6.1.11
 
 
 

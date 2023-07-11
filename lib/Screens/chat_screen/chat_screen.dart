@@ -10,7 +10,6 @@ import '../../Modals/user_modal.dart';
 import '../../Services/fire_store/firebase_store_services.dart';
 import 'Widgets/chat_input_box_field.dart';
 
-
 class ChatScreen extends StatefulWidget {
   const ChatScreen({Key? key}) : super(key: key);
 
@@ -19,12 +18,12 @@ class ChatScreen extends StatefulWidget {
 }
 
 class _ChatScreenState extends State<ChatScreen>
-    with TickerProviderStateMixin,ChatScreenLogic{
-
-
+    with TickerProviderStateMixin, ChatScreenLogic {
   final FireStoreServices _storeServices = FireStoreServices();
 
   late final CurvedAnimation fadeAnimation;
+  late String currentUID;
+
   @override
   void initState() {
     // TODO: implement initState
@@ -32,21 +31,19 @@ class _ChatScreenState extends State<ChatScreen>
     animationController = AnimationController(
         vsync: this, duration: const Duration(milliseconds: 1000));
 
-    fadeAnimation = CurvedAnimation(parent: animationController, curve: Curves.easeIn);
-
+    fadeAnimation =
+        CurvedAnimation(parent: animationController, curve: Curves.easeIn);
   }
-
 
   @override
   Widget build(BuildContext context) {
-    setUpdateState((){setState(() {
-
-    });});
+    setUpdateState(() {
+      setState(() {});
+    });
     size = MediaQuery.of(context).size;
-    if(!receiverDataReceived||receiverMap.isEmpty)
-    {
+    if (!receiverDataReceived || receiverMap.isEmpty) {
       arguments =
-      ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
+          ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
 
       log("ARGUMENTS RECEIVED: ${arguments["roomId"]}");
 
@@ -56,21 +53,20 @@ class _ChatScreenState extends State<ChatScreen>
       receiverProfilePicture = arguments["userMap"]["ProfilePictureURL"];
       roomID = arguments["roomId"];
       currentUserName = context.read<UserModel>().name;
+      currentUID = context.read<UserModel>().userId;
 
       receiverDataReceived = true;
     }
-    if(!imageDownloaded) {
+    if (!imageDownloaded) {
       getImageFileFromUrl();
     }
-    if(!senderDataReceived||senderMap.isEmpty)
-      {
-        senderMap = {
-          "senderUserName":context.read<UserModel>().name,
-          "senderUid":context.read<UserModel>().userId,
-          "senderProfilePicture":context.read<UserModel>().downloadUrl,
-        };
-      }
-
+    if (!senderDataReceived || senderMap.isEmpty) {
+      senderMap = {
+        "senderUserName": context.read<UserModel>().name,
+        "senderUid": context.read<UserModel>().userId,
+        "senderProfilePicture": context.read<UserModel>().downloadUrl,
+      };
+    }
 
     return Scaffold(
       backgroundColor: Colors.grey.shade900,
@@ -103,32 +99,35 @@ class _ChatScreenState extends State<ChatScreen>
                 background: Center(
                   child: imageDownloaded
                       ? ShaderMask(
-                    blendMode: BlendMode.hardLight,
-                    shaderCallback: (Rect bounds) {
-                      return LinearGradient(
-                        colors: [Colors.transparent, Colors.grey.shade900],
-                        begin: Alignment.topCenter,
-                        end: Alignment.bottomCenter,
-                      ).createShader(bounds);
-                    },
-                    child: FadeTransition(
-                        opacity: fadeAnimation,
-                        child: Image.file(
-                          height: double.infinity,
-                          width: double.infinity,
-                          userProfileFile,fit: BoxFit.fitWidth,)
-                    ),
-
-                  )
+                          blendMode: BlendMode.hardLight,
+                          shaderCallback: (Rect bounds) {
+                            return LinearGradient(
+                              colors: [
+                                Colors.transparent,
+                                Colors.grey.shade900
+                              ],
+                              begin: Alignment.topCenter,
+                              end: Alignment.bottomCenter,
+                            ).createShader(bounds);
+                          },
+                          child: FadeTransition(
+                              opacity: fadeAnimation,
+                              child: Image.file(
+                                height: double.infinity,
+                                width: double.infinity,
+                                userProfileFile,
+                                fit: BoxFit.fitWidth,
+                              )),
+                        )
                       : const SizedBox(
-                      width: 30,
-                      height: 30,
-                      child: CircularProgressIndicator(
-                        // backgroundColor: Colors.grey.shade900,
-                          color: Colors.white,
-                          semanticsLabel: "Processing profile picture",
-                          semanticsValue: "Processing",
-                          strokeWidth: 2)),
+                          width: 30,
+                          height: 30,
+                          child: CircularProgressIndicator(
+                              // backgroundColor: Colors.grey.shade900,
+                              color: Colors.white,
+                              semanticsLabel: "Processing profile picture",
+                              semanticsValue: "Processing",
+                              strokeWidth: 2)),
                 )),
           ),
           SliverFillRemaining(
@@ -143,24 +142,22 @@ class _ChatScreenState extends State<ChatScreen>
                         .collection('chats')
                         .orderBy('time', descending: true)
                         .snapshots(),
-                    builder:
-                        (BuildContext context,
+                    builder: (BuildContext context,
                         AsyncSnapshot<QuerySnapshot> snapshot) {
-
-
                       if (snapshot.hasData) {
-                        if(snapshot.data!.size!=0) {
-                          return ListView.builder(reverse: true,
-                            // itemExtent: 50.0,
-                            itemCount: snapshot.data!.docs.length,
-                            itemBuilder: (context, count) {
-                              Map<String, dynamic> messageMap = snapshot.data!
-                                  .docs[count]
-                                  .data() as Map<String, dynamic>;
-                              return bubbleMessage(messageMap, currentUserName);
-                            });
-                        }
-                        else {
+                        if (snapshot.data!.size != 0) {
+                          return ListView.builder(
+                              reverse: true,
+                              // itemExtent: 50.0,
+                              itemCount: snapshot.data!.docs.length,
+                              itemBuilder: (context, count) {
+                                Map<String, dynamic> messageMap =
+                                    snapshot.data!.docs[count].data()
+                                        as Map<String, dynamic>;
+                                return bubbleMessage(
+                                    messageMap, currentUserName);
+                              });
+                        } else {
                           return Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
@@ -180,7 +177,6 @@ class _ChatScreenState extends State<ChatScreen>
                             ],
                           );
                         }
-
                       }
                       /*if(!snapshot.hasData){
                         return Column(
@@ -203,8 +199,7 @@ class _ChatScreenState extends State<ChatScreen>
                         );
                       }*/
                       return Container();
-
-                        },
+                    },
                   ),
                 ),
                 /*Expanded(
@@ -227,6 +222,30 @@ class _ChatScreenState extends State<ChatScreen>
                     ],
                   ),
                 ),*/
+              /*  StreamBuilder(
+                    stream: FirebaseFirestore.instance.collection('KuChatsUsers')
+                        .doc(currentUID)
+                        .collection('RecentChats')
+                        .doc(receiverUserId).snapshots(),
+
+                    builder: (context, snapshot) {
+
+                      log("Seen status : ${snapshot.data!["lastMessageStatus"]}");
+                      return Container(height: 1,);
+
+
+                    }),*/
+                /*  if(true)
+                Container(
+                  padding: EdgeInsets.symmetric(horizontal: 10),
+                  child: Align(
+                    alignment: Alignment.bottomRight,
+                    child: Text(
+                      "Seen",
+                      style: TextStyle(color: Colors.white),
+                    ),
+                  ),
+                ),*/
                 ChatInputBoxField(onSend: onSendMessage)
               ],
             ),
@@ -237,6 +256,7 @@ class _ChatScreenState extends State<ChatScreen>
   }
 
   void onSendMessage(BuildContext context, String message) async {
+    String currentUID = context.read<UserModel>().userId;
     log(message);
     if (message.isNotEmpty) {
       //
@@ -244,18 +264,31 @@ class _ChatScreenState extends State<ChatScreen>
         "sendby": currentUserName,
         "message": message,
         "time": FieldValue.serverTimestamp(),
+        "receiverUID": receiverUserId,
+        "senderUID": currentUID
+        // "sendFrom":context.read<>,
+        // "sendTo":receiverUserId
       };
 
       await _storeServices.sendToStore(roomID, messageMap);
-      await _storeServices.updateSenderRecentChat(context, receiverMap,senderMap, message);
+      await _storeServices.updateSenderRecentChat(
+          context, receiverMap, senderMap, message);
     } else {
       log('Message failed');
     }
   }
-  Widget bubbleMessage(Map<String, dynamic> messageMap,
-      String currentUserName) {
+
+  Widget bubbleMessage(
+      Map<String, dynamic> messageMap, String currentUserName) {
     return messageMap['sendby'] == currentUserName
-        ? SenderBubble(text: messageMap["message"])
-        : ReceiverBubble(text: messageMap["message"]);
+        ? SenderBubble(
+            text: messageMap["message"],
+            senderUID: messageMap["senderUID"],
+            receiverUID: messageMap["receiverUID"],
+          )
+        : ReceiverBubble(
+            text: messageMap["message"],
+            currentUID: messageMap["senderUID"],
+            receiverUID: messageMap["receiverUID"]);
   }
 }
