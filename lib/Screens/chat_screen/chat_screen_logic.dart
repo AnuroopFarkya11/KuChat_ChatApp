@@ -28,7 +28,7 @@ class ChatScreenLogic{
   }
 
 
-  getImageFileFromUrl() async {
+  /*getImageFileFromUrl() async {
     final filename = receiverUserId;
     final appDir = await getApplicationDocumentsDirectory();
     final filePath = '${appDir.path}/$filename';
@@ -52,7 +52,7 @@ class ChatScreenLogic{
       });
       return file;
     }
-  }
+  }*/
 
 
 }

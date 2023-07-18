@@ -148,14 +148,15 @@ class FirebaseAuthService {
       log("Password Updated Successfully!");
       return true;
     } on FirebaseException catch (e) {
-      log(e.message.toString());
+      log("PASSWORD UPDATE STATUS: ${e.message}");
+      throw e.message.toString();
     }
     return false;
   }
 
   Future<bool> signOutUser(context) async
   {
-    showSnackBar(context, "Logging out");
+    // showSnackBar(context, "Logging out");
     try {
       await FireStoreServices().setActiveStatus(false);
 

@@ -21,7 +21,8 @@ class KuAppTheme {
       ));
 
   static ThemeData darkTheme = ThemeData(
-      fontFamily: GoogleFonts.poppins().fontFamily,
+      // fontFamily: GoogleFonts.poppins().fontFamily,
+      textTheme: GoogleFonts.poppinsTextTheme(),
       scaffoldBackgroundColor: Colors.grey.shade900,
       appBarTheme: const AppBarTheme(color: Colors.transparent, elevation: 0),
       floatingActionButtonTheme: const FloatingActionButtonThemeData(

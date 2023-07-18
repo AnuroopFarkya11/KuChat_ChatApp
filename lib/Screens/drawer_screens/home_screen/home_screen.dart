@@ -9,6 +9,8 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:kuchat/Services/auth/firebase_auth_services.dart';
 import 'package:kuchat/Services/fire_store/firebase_store_services.dart';
+import 'package:kuchat/Services/notification_manager/notifcation_manager.dart';
+import 'package:kuchat/Widgets/snack_bar.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 
@@ -49,7 +51,6 @@ class _HomeScreenState extends State<HomeScreen>
     currentUID = context
         .read<UserModel>()
         .userId;
-
     log("Home Screen init");
     // currentUID = context.read<UserModel>().userId;
     // getUrl(context);
@@ -57,10 +58,16 @@ class _HomeScreenState extends State<HomeScreen>
         duration: const Duration(milliseconds: 1000), vsync: this);
 
     getImageFileFromUrl();
+    updateToken();
 
     WidgetsBinding.instance!.addObserver(this);
     _storeServices.setActiveStatus(true);
+
+
   }
+  updateToken()async{
+    await _storeServices.updateUserToken();
+}
 
 
   @override
@@ -125,150 +132,151 @@ class _HomeScreenState extends State<HomeScreen>
     return Scaffold(
       backgroundColor: Colors.grey.shade900,
       drawer: const KuDrawer(),
-      body: CustomScrollView(
-        slivers: [
-          SliverAppBar(
-            pinned: true,
-            floating: true,
-            snap: true,
-            elevation: 50,
-            backgroundColor: AppColor.kuGrey,
-            expandedHeight: size.height * 0.3,
-            // leading: IconButton(icon:Icon(Icons.menu),onPressed: (){},),
-            actions: [
-              IconButton(
-                  onPressed: () async {
-                    await _authService.signOutUser(context)
-                        ? Navigator.pushNamedAndRemoveUntil(context, '/SignInScreen', (route) => false)
-                        : null;
-                  },
-                  icon: const Icon(Icons.logout_outlined)),
-              const SizedBox(
-                width: 12,
-              )
-            ],
-            flexibleSpace: FlexibleSpaceBar(
-              // centerTitle: true,
-              titlePadding:
-              const EdgeInsets.only(left: 10, bottom: 10, right: 10),
-              background: ShaderMask(
-                  blendMode: BlendMode.hardLight,
-                  shaderCallback: (Rect bounds) {
-                    return LinearGradient(
-                      colors: [Colors.transparent, Colors.grey.shade900],
-                      begin: Alignment.topCenter,
-                      end: Alignment.bottomCenter,
-                    ).createShader(bounds);
-                  },
-                  child: imageDownloaded
-                      ? FadeTransition(
-                      opacity: fadeAnimation,
-                      child: Image.file(
-                        userProfileFile,
-                        fit: BoxFit.fitWidth,
-                      ))
-                      : Image.asset(
-                    "assets/wallpaper.jpg",
-                    fit: BoxFit.fill,
-                  )),
-              title: Text(
-                "Chats",
-                textAlign: TextAlign.start,
-                style: GoogleFonts.alata(fontSize: 20),
+      body: SafeArea(
+        child: CustomScrollView(
+          slivers: [
+            SliverAppBar(
+              pinned: true,
+              floating: true,
+              snap: true,
+              elevation: 50,
+              backgroundColor: AppColor.kuGrey,
+              expandedHeight: size.height * 0.3,
+              // leading: IconButton(icon:Icon(Icons.menu),onPressed: (){},),
+              actions: [
+                IconButton(
+                    onPressed: () async {
+                      showSnackBar(context, "KuChat Team is working on this feature.");
+                      
+                    },
+                    icon: const Icon(Icons.qr_code)),
+                const SizedBox(
+                  width: 12,
+                )
+              ],
+              flexibleSpace: FlexibleSpaceBar(
+                // centerTitle: true,
+                titlePadding:
+                const EdgeInsets.only(left: 10, bottom: 10, right: 10),
+                background: ShaderMask(
+                    blendMode: BlendMode.hardLight,
+                    shaderCallback: (Rect bounds) {
+                      return LinearGradient(
+                        colors: [Colors.transparent, Colors.grey.shade900],
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                      ).createShader(bounds);
+                    },
+                    child: imageDownloaded
+                        ? FadeTransition(
+                        opacity: fadeAnimation,
+                        child: Image.file(
+                          userProfileFile,
+                          fit: BoxFit.fitWidth,
+                        ))
+                        : Image.asset(
+                      "assets/wallpaper.jpg",
+                      fit: BoxFit.fill,
+                    )),
+                title: Text(
+                  "Chats",
+                  textAlign: TextAlign.start,
+                  style: GoogleFonts.alata(fontSize: 20),
+                ),
               ),
             ),
-          ),
-          // if(_showSearchBar)
-          SliverToBoxAdapter(
-            child: Container(
-              padding: const EdgeInsets.all(8.0),
-              child: Column(
-                children: [
-                  TextField(
-                    focusNode: _searchFocusNode,
-                    cursorColor: Colors.white,
-                    autocorrect: false,
-                    style: GoogleFonts.poppins(color: Colors.white),
+            // if(_showSearchBar)
+            SliverToBoxAdapter(
+              child: Container(
+                padding: const EdgeInsets.all(8.0),
+                child: Column(
+                  children: [
+                    TextField(
+                      focusNode: _searchFocusNode,
+                      cursorColor: Colors.white,
+                      autocorrect: false,
+                      style: GoogleFonts.poppins(color: Colors.white),
 
-                    // keyboardAppearance: Brightness.dark,
+                      // keyboardAppearance: Brightness.dark,
 
-                    onChanged: (value) {
-                      searchValue = value;
-                      setState(() {});
-                    },
-                    onTapOutside: (event) {
-                      // _searchFocusNode.nextFocus();
-                    },
-                    decoration: InputDecoration(
-                        filled: true,
-                        fillColor: Colors.white70,
-                        iconColor: Colors.white,
-                        focusColor: Colors.white,
-                        alignLabelWithHint: true,
-                        suffixIconColor: Colors.white,
-                        border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(30),
-                            gapPadding: 20.0),
-                        focusedBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(30),
-                            gapPadding: 20.0,
-                            borderSide: const BorderSide(
-                                color: Colors.white, width: 1.5)),
-                        labelText: "  Search",
-                        labelStyle: GoogleFonts.poppins(color: Colors.white70),
-                        suffixIcon: const Icon(Icons.search)),
-                  ),
-                  Divider(
-                    color: Colors.white,
-                    thickness: 1.25,
-                    indent: size.width * 0.15,
-                    endIndent: size.width * 0.15,
-                  )
-                ],
-              ),
-            ),
-          ),
-
-          StreamBuilder(
-              stream: FirebaseFirestore.instance
-                  .collection("KuChatsUsers")
-                  .doc(currentUID)
-                  .collection("RecentChats")
-                  .where("archived", isEqualTo: false)
-                  .where("blocked", isEqualTo: false)
-                  .snapshots(),
-              builder: (BuildContext context,
-                  AsyncSnapshot<QuerySnapshot> snapshot) {
-                if (snapshot.hasData && snapshot.data!.docs.isNotEmpty) {
-                  // log("Home screen:${snapshot.data!.docs.isEmpty}");
-
-                  return getUserList(snapshot);
-                } else {
-                  return SliverFillRemaining(
-                    hasScrollBody: false,
-                    child: Center(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Image.asset(
-                            "assets/kuuuu/confusingKuu.png",
-                            height: 150,
-                          ),
-                          Text(
-                            "No recent chat\nDon't you wanna chat??!",
-                            textAlign: TextAlign.center,
-                            style: GoogleFonts.poppins(
-                                color: Colors.white,
-                                fontSize: 16,
-                                fontWeight: FontWeight.w400),
-                          )
-                        ],
-                      ),
+                      onChanged: (value) {
+                        searchValue = value;
+                        setState(() {});
+                      },
+                      onTapOutside: (event) {
+                        // _searchFocusNode.nextFocus();
+                      },
+                      decoration: InputDecoration(
+                          filled: true,
+                          fillColor: Colors.white70,
+                          iconColor: Colors.white,
+                          focusColor: Colors.white,
+                          alignLabelWithHint: true,
+                          suffixIconColor: Colors.white,
+                          border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(30),
+                              gapPadding: 20.0),
+                          focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(30),
+                              gapPadding: 20.0,
+                              borderSide: const BorderSide(
+                                  color: Colors.white, width: 1.5)),
+                          labelText: "  Search",
+                          labelStyle: GoogleFonts.poppins(color: Colors.white70),
+                          suffixIcon: const Icon(Icons.search)),
                     ),
-                  );
-                }
-              })
-        ],
+                    Divider(
+                      color: Colors.white,
+                      thickness: 1.25,
+                      indent: size.width * 0.15,
+                      endIndent: size.width * 0.15,
+                    )
+                  ],
+                ),
+              ),
+            ),
+
+            StreamBuilder(
+                stream: FirebaseFirestore.instance
+                    .collection("KuChatsUsers")
+                    .doc(currentUID)
+                    .collection("RecentChats")
+                    .where("archived", isEqualTo: false)
+                    .where("blocked", isEqualTo: false).orderBy("time",descending: true)
+                    .snapshots(),
+                builder: (BuildContext context,
+                    AsyncSnapshot<QuerySnapshot> snapshot) {
+                  if (snapshot.hasData && snapshot.data!.docs.isNotEmpty) {
+                    // log("Home screen:${snapshot.data!.docs.isEmpty}");
+
+                    return getUserList(snapshot);
+                  } else {
+                    return SliverFillRemaining(
+                      hasScrollBody: false,
+                      child: Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Image.asset(
+                              "assets/kuuuu/confusingKuu.png",
+                              height: 150,
+                            ),
+                            Text(
+                              "No recent chat\nDon't you wanna chat??!",
+                              textAlign: TextAlign.center,
+                              style: GoogleFonts.poppins(
+                                  color: Colors.white,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w400),
+                            )
+                          ],
+                        ),
+                      ),
+                    );
+                  }
+                })
+          ],
+        ),
       ),
       floatingActionButton: FloatingActionButton(
         backgroundColor: Colors.white70,
@@ -289,7 +297,7 @@ class _HomeScreenState extends State<HomeScreen>
         itemExtent: 85);
   }
 
-  getUserTile(AsyncSnapshot<QuerySnapshot<Object?>> snapshot,
+    getUserTile(AsyncSnapshot<QuerySnapshot<Object?>> snapshot,
       BuildContext context) {
     return snapshot.data!.docs
         .map((doc) =>
@@ -341,22 +349,22 @@ class _HomeScreenState extends State<HomeScreen>
                   bool activeStatus = snapshot.data!["activityStatus"];
                   if(activeStatus)
                     {
-                      return Text("🟢");
+                      return const Text("🟢");
                     }
                   else
                     {
-                      return  Text("🔴");
+                      return  const Text("🔴");
                     }
                 }
               else if(snapshot.hasError)
                 {
-                  return Text("🔴");
+                  return const Text("🔴");
                 }else if(snapshot.connectionState==ConnectionState.waiting)
                   {
-                   return Text("🔴");
+                   return const Text("🔴");
 
                   }
-              return Text("🔴");
+              return const Text("🔴");
 
 
           },),

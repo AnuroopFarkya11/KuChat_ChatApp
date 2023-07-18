@@ -11,14 +11,14 @@ class SplashScreenLogic{
   final FirebaseAuthService _authService = FirebaseAuthService();
   final FireStoreServices _storeServices = FireStoreServices();
 
-  void checkAuthToFetch(){
+  void checkAuthToFetch()async{
     String status = _authService.firebaseAuthStatus();
 
     if(status=="true")
     {
       // todo add a check whether the data loaded successfully or not
       // todo error handling if user data failed to load
-      _storeServices.loadCurrentUser(context).whenComplete((){
+      await _storeServices.loadCurrentUser(context).whenComplete((){
         Future.delayed(Duration(seconds: 2),(){
 
           Navigator.pushReplacementNamed(context, '/HomeScreen');

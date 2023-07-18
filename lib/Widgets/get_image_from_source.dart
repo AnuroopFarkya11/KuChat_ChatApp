@@ -16,23 +16,36 @@ import '../Services/fire_store/firebase_store_services.dart';
 import '../Utils/theme_color/app_colors.dart';
 
 class GetImage {
-  final BuildContext context;
-  final Function() setState;
-  final String userUID;
+  // late BuildContext context;
+  late Function() setState;
+  late String userUID;
 
-
-  GetImage(
-      {required this.context,
-      required this.setState,
-      required this.userUID,
-      });
-
+  GetImage({
+    // required this.context,
+    required this.setState,
+    required this.userUID,
+  });
+/*
+* show modal bottom sheet
+* show two options: GALLERY AND CAMERA
+* TAKE IMAGE PATH
+* CALL PROCESS INDICATOR FUNCTION : THIS FUNCTION WILL MAKE TRUE THE INDICATOR BOOL AND CALL SET STATE.
+* CALL START UPLOAD METHOD: HERE FIRESTORE WILL UPDATE AND METHOD WILL RETURN A UPDATE PROFILE URL
+*
+* YHA SE IG RETURN THIS URL TO THE FUNCTION CALL
+*
+*
+*
+*
+*
+*
+* */
   final FirebaseStorageServices _storageServices = FirebaseStorageServices();
   final FireStoreServices _storeServices = FireStoreServices();
 
-  Future getImageSource() async{
-    String imagePath = "";
-    showModalBottomSheet(
+  Future<String> getImageSource(BuildContext context) async {
+    String imagePath= "";
+    await showModalBottomSheet(
         context: context,
         builder: (context) {
           return Column(
@@ -58,24 +71,22 @@ class GetImage {
                     children: [
                       InkWell(
                         onTap: () async {
-                         try {
-                           await selectImageFromGallery().then((imagePath)async{
-                             if (imagePath.isNotEmpty) {
-                               log("Select GalleryImage Status: $imagePath");
-                               CurrentUserProfileScreenLogic.loadingImage = true;
-                               Navigator.of(context).pop();
-                               setState();
-                               pushPictureToStorage(imagePath);
+                          try {
+                            await selectImageFromGallery()
+                                .then((value) async {
+                              if (value.isNotEmpty) {
+                                log("Select GalleryImage Status: $value");
+                                imagePath=value;
+                                Navigator.of(context).pop();
 
-                             } else {
-                               showSnackBar(context, "An error occurred.");
-                             }
-                           });
-                         } on Exception catch (e) {
-                           log("Select GalleryImage Status:${e.toString()}");
-                         }
-
-
+                                // setState();
+                              } else {
+                                showSnackBar(context, "An error occurred.");
+                              }
+                            });
+                          } on Exception catch (e) {
+                            log("Select GalleryImage Status:${e.toString()}");
+                          }
                         },
                         child: const CircleAvatar(
                           backgroundColor: AppColor.kuGrey,
@@ -99,7 +110,17 @@ class GetImage {
                   ),
                   InkWell(
                     onTap: () async {
-                      XFile imagepath = await selectImageFromCamera();
+                      await selectImageFromCamera().then((value){
+                        if (value.isNotEmpty) {
+                          log("Select CameraImage Status: $value");
+                          imagePath=value;
+                          Navigator.of(context).pop();
+
+                          // setState();
+                        } else {
+                          showSnackBar(context, "An error occurred.");
+                        }
+                      });
                       // log("${imagepath}");
                     },
                     child: Column(
@@ -131,12 +152,8 @@ class GetImage {
               )
             ],
           );
-        }
-        );
-    if(imagePath.isNotEmpty)
-      {
-        return imagePath;
-      }
+        });
+   return imagePath;
   }
 
   Future selectImageFromGallery() async {
@@ -150,7 +167,7 @@ class GetImage {
     }
   }
 
-  selectImageFromCamera() async {
+  Future selectImageFromCamera() async {
     ImagePicker picker = ImagePicker();
     final XFile? file = await picker.pickImage(source: ImageSource.camera);
     if (file != null) {
@@ -165,22 +182,8 @@ class GetImage {
     final cropperdFile = await cropper.cropImage(
         sourcePath: file.path,
         cropStyle: CropStyle.rectangle,
-        aspectRatioPresets: Platform.isAndroid
-            ? [
-                CropAspectRatioPreset.square,
-                CropAspectRatioPreset.ratio3x2,
-                CropAspectRatioPreset.original,
-                CropAspectRatioPreset.ratio4x3,
-                CropAspectRatioPreset.ratio16x9
-              ]
-            : [
-                CropAspectRatioPreset.original,
-                CropAspectRatioPreset.square,
-                CropAspectRatioPreset.ratio3x2,
-                CropAspectRatioPreset.ratio4x3,
-                CropAspectRatioPreset.ratio5x3,
-                CropAspectRatioPreset.ratio16x9
-              ],
+        aspectRatio: const CropAspectRatio(ratioX: 1, ratioY: 1),
+
         uiSettings: [
           AndroidUiSettings(
               toolbarTitle: "Crop Picture",
@@ -202,53 +205,39 @@ class GetImage {
     }
   }
 
-  void deleteProfileFilefromDevice() async {
-    final appDir = await getApplicationDocumentsDirectory();
-    final filePath = "${appDir.path}/$userUID";
-
-    final file = File(filePath);
-
-    try {
-      await file.delete();
-    } on Exception catch (e) {
-      log("FILE DELETE STATUS: ${e.toString()}");
-    }
-  }
 
 
-  startUploadImage(imagePath) async{
+/*  Future startUploadImage(imagePath) async {
     if (imagePath.isNotEmpty) {
-
+      // setState();
       try {
         await _storageServices
-            .uploadProfile(
-            imagePath: imagePath, imageName: userUID)
+            .uploadProfilePictureToStorage(
+                imagePath: imagePath, imageName: userUID)
             .then((value) async {
           context.read<UserModel>().downloadUrl = value;
-          await _storeServices
-              .updateProfileURL(url: value)
-              .whenComplete(() {
-            deleteProfileFilefromDevice();
-          });
+          await _storeServices.updateProfileURL(url: value);
         });
       } on Exception catch (e) {
-        showSnackBar(
-            context, "An error occurred.Please try again");
+        throw "An error occurred.Please try again";
+        // showSnackBar(context, "An error occurred.Please try again");
       }
-      setState();
-    }
-  }
 
-  void pushPictureToStorage(imagePath) async{
+    }
+  }*/
+
+  /*void pushPictureToStorage(imagePath) async {
     String currentUid = context.read<UserModel>().userId;
 
-     await FirebaseStorageServices().uploadProfile(imagePath: imagePath, imageName:currentUid).whenComplete((){
-                                 showSnackBar(context, "Profile updated successfully!");
-                                 CurrentUserProfileScreenLogic.loadingImage=false;
-                                 setState();
-                               });
-
-  }
+    await FirebaseStorageServices()
+        .uploadProfilePictureToStorage(
+            imagePath: imagePath, imageName: currentUid)
+        .whenComplete(() {
+      showSnackBar(context, "Profile updated successfully!");
+      CurrentUserProfileScreenLogic.loadingImage = false;
+      setState();
+    });
+  }*/
 }
 /*BottomSheet(
         backgroundColor: Colors.grey.shade800,

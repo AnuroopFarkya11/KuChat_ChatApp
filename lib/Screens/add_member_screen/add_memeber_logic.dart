@@ -40,7 +40,7 @@ class AddMemberLogic{
         ),
       ),
       title: Text(doc["Name"],style: const TextStyle(color: AppColor.kuWhite),),
-      subtitle: Text(doc["userBio"],style: const TextStyle(color: Colors.white54)),
+      subtitle: Text(doc["userBio"],style: const TextStyle(color: Colors.white54),overflow: TextOverflow.ellipsis),
       trailing: const Icon(Icons.add,color: Colors.white,size:20),
       onTap: () {
         // NEXT USER KI UID PASS KR RHA

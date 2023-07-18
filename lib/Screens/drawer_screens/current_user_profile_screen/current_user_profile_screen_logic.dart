@@ -1,9 +1,11 @@
 import 'dart:developer';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:kuchat/Services/fire_storage/firebase_storage_services.dart';
 import 'package:kuchat/Services/fire_store/firebase_store_services.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 
 import '../../../Modals/user_modal.dart';
@@ -21,11 +23,11 @@ class CurrentUserProfileScreenLogic{
   final TextEditingController _changeUserNameController = TextEditingController();
   final _changeUserNameKey = GlobalKey<FormState>();
 
-  late final GetImage getImage;
-  static bool loadingImage = false;
+  late GetImage getImage;
+  bool loadingImage = false;
 
 
-  final FireStoreServices _storeServices = FireStoreServices();
+  final FireStoreServices storeServices = FireStoreServices();
   final FirebaseStorageServices _storageServices = FirebaseStorageServices();
   late Function() setCurrentState;
 
@@ -107,7 +109,7 @@ class CurrentUserProfileScreenLogic{
                   ElevatedButton(
                     onPressed: () async {
                       if (_changeUserNameKey.currentState!.validate()) {
-                        await _storeServices.updateUserName(
+                        await storeServices.updateUserName(
                             newUserName: _changeUserNameController.text)
                             .then((value) {
                           if (value) {
@@ -192,7 +194,7 @@ class CurrentUserProfileScreenLogic{
                   ),
                   ElevatedButton(
                     onPressed: () async {
-                      await _storeServices.updateUserBio(
+                      await storeServices.updateUserBio(
                           newUserBio: _changeUserBioController.text)
                           .then((value) {
                         if (value) {
@@ -221,6 +223,23 @@ class CurrentUserProfileScreenLogic{
         });
   }
 
+  Future deleteProfileFilefromDevice() async {
+    log(name:"DELETE IMAGE STATUS","CALLED");
+    final appDir = await getApplicationDocumentsDirectory();
+    final filePath = "${appDir.path}/$userUID";
+    log(name:"DELETE IMAGE STATUS FILEPATH ",filePath);
+
+
+    final file = File(filePath);
+
+    try {
+      await file.delete();
+      log(name:"DELETE IMAGE STATUS","IMAGE DELETED SUCCESSFULLY");
+
+    } on Exception catch (e) {
+      log("FILE DELETE STATUS: ${e.toString()}");
+    }
+  }
 
 
 

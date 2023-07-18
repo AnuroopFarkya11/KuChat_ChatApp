@@ -143,11 +143,11 @@ class _KuDrawerState extends State<KuDrawer> {
               title: "Logout",
               onTap: () {
                 selectedTile(6);
-                Navigator.of(context).pop();
                 FirebaseAuthService().signOutUser(context).then((bool res){
                   if(res)
                     {
-                      Navigator.pushNamedAndRemoveUntil(context, "/SignInScreen", (route) => false);
+                      Navigator.of(context).pop();
+                      Navigator.pushReplacementNamed(context, "/SignInScreen");
                       selectedTileIndex =0;
                     }
                 });

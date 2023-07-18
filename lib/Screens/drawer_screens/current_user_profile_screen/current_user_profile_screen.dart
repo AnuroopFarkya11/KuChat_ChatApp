@@ -2,11 +2,13 @@ import 'dart:developer';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart';
 import 'package:kuchat/Utils/theme_color/app_colors.dart';
 import 'package:kuchat/Widgets/get_image_from_source.dart';
 import 'package:provider/provider.dart';
 
 import '../../../Modals/user_modal.dart';
+import '../../../Widgets/bottom_image_sources.dart';
 import '../../../Widgets/kudrawer.dart';
 import 'current_user_profile_screen_logic.dart';
 
@@ -24,18 +26,24 @@ class _CurrentUserProfileScreenState extends State<CurrentUserProfileScreen>
   void initState() {
     // TODO: implement initState
     super.initState();
-    url = context.read<UserModel>().downloadUrl;
     userName = context.read<UserModel>().name;
     userEmailAddress = context.read<UserModel>().email;
     userBio = context.read<UserModel>().userBio;
     userUID = context.read<UserModel>().userId;
-    getImage = GetImage(context: context, setState:(){setState(() {
+    url = context.read<UserModel>().downloadUrl;
+    getImage = GetImage(
 
-    });}, userUID: userUID);
+        setState: () {
+          setState(() {});
+        },
+        userUID: userUID);
   }
 
   @override
   Widget build(BuildContext context) {
+    log(name: "CURRENT PROFILE STATUS ", "CALLED");
+
+
     Size size = MediaQuery.of(context).size;
     updateState(() {
       setState(() {});
@@ -50,13 +58,51 @@ class _CurrentUserProfileScreenState extends State<CurrentUserProfileScreen>
             elevation: 22,
             actions: [
               IconButton(
-                  onPressed: ()async {
-                    await getImage.getImageSource();
+                  onPressed: () async {
+                    // Navigator.pushNamed(context, "/BottomImageSource");
+                    // context.read<UserModel>().downloadUrl="";
+                    await getImage.getImageSource(context).then((value)async{
+                      loadingImage = true;
+                      setState(() {
+                      });
+                      log(name:"IMAGE UPDATE TO CURRENT SCREEN STATUS",value);
+                      if(value.isNotEmpty)
+                        {
+                          await storeServices.startUploadImage(value).then((value)async{
+                            await deleteProfileFilefromDevice().whenComplete((){
+
+                              context.read<UserModel>().downloadUrl = value;
+                              url = value;
+                              loadingImage=false;
+                              setState(() {
+
+                              });
+                            });
+
+                          });
+                        }
+
+
+                    });
+                    /*TODO
+                      * make a function jisse apn process indicator update kr va ske:
+                      * pass the function as the parameter
+                      *
+                      *
+                      * call startUpload() method jisse hame upload hone ke baad url mil jaayega
+                      *
+                      * uss url ko usermodel ke download url me rkhna pdega
+                      *
+                      *
+                      *
+                      *
+                      * */
                   },
                   icon: const Icon(Icons.edit))
             ],
             flexibleSpace: FlexibleSpaceBar(
-              background: CurrentUserProfileScreenLogic.loadingImage
+              //CurrentUserProfileScreenLogic.loadingImage
+              background:loadingImage
                   ? const Center(
                       child: CircularProgressIndicator(
                       color: AppColor.kuWhite,
@@ -111,8 +157,8 @@ class _CurrentUserProfileScreenState extends State<CurrentUserProfileScreen>
             child: Column(
               children: [
                 Container(
-                  padding: EdgeInsets.all(10),
-                  margin: EdgeInsets.all(10),
+                  padding: const EdgeInsets.all(10),
+                  margin: const EdgeInsets.all(10),
                   decoration: BoxDecoration(
                       color: Colors.white70,
                       borderRadius: BorderRadius.circular(12)),
@@ -227,3 +273,24 @@ class _CurrentUserProfileScreenState extends State<CurrentUserProfileScreen>
 //
 // ],
 // ),
+
+
+
+/*    await _storeServices
+                                    .startUploadImage(imagePath)
+                                    .then((value){
+                                  log(
+                                      name: "PROFILE UPDATE STATUS:",
+                                      "UPLOAD COMPLETE $value");
+                                  imageUrl = value;
+                                  // statecontext.read<UserModel>().downloadUrl = value;
+                                  // setState();
+                                 /* await deleteProfileFilefromDevice()
+                                      .whenComplete(() {
+                                    showSnackBar(context,
+                                        "Profile updated successfully!");
+                                    CurrentUserProfileScreenLogic.loadingImage =
+                                        false;
+                                    setState();
+                                  });*/
+                                });*/

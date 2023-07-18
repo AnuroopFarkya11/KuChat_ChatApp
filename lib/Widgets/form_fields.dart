@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:kuchat/Utils/theme_color/app_colors.dart';
 
 class KuFormField extends StatefulWidget {
   final String? labelText;
+  final String? hintText;
   final GlobalKey<FormState>? formKey;
   final TextEditingController? textFormController;
   final Function()? formOnTap;
@@ -16,6 +18,7 @@ class KuFormField extends StatefulWidget {
   const KuFormField({
     Key? key,
     this.labelText = "",
+    this.hintText = "",
     this.formKey,
     this.textFormController,
     this.formOnTap,
@@ -57,6 +60,8 @@ class _KuFormFieldState extends State<KuFormField> {
             obscureText: widget.obscureText,
             decoration: InputDecoration(
               labelText: widget.labelText,
+              hintText: widget.hintText,
+              hintStyle: TextStyle(fontSize: 14,color: AppColor.kuWhite70),
               suffixIcon: widget.suffixIcon
             ),
             onTap: widget.formOnTap,

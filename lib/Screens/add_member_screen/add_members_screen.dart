@@ -82,7 +82,7 @@ class _AddMemberScreenState extends State<AddMemberScreen> with AddMemberLogic {
           ),
           StreamBuilder(
               stream: FirebaseFirestore.instance
-                  .collection("KuChatsUsers").where("Name",isGreaterThanOrEqualTo: searchValue)
+                  .collection("KuChatsUsers").where("UserID",isNotEqualTo:currentUID)
                   .snapshots(),
               builder: (BuildContext context,
                   AsyncSnapshot<QuerySnapshot> snapshot) {

@@ -31,7 +31,7 @@ class _SignUpBioScreenState extends State<SignUpBioScreen> with SignUpBioScreenL
     // log("UID RECEIVED SUCCESSFULLY : $uid");
 
   }
-
+  FocusNode bioFocus=FocusNode();
   @override
   Widget build(BuildContext context) {
     screenState((){setState(() {
@@ -93,6 +93,7 @@ class _SignUpBioScreenState extends State<SignUpBioScreen> with SignUpBioScreenL
                     children: [
                       KuFormField(
                         labelText: "Write something about yourself!",
+                        hintText: "Hello! I am a KuChatUser!",
                         textFormController:bioController,
                       ),
 
@@ -138,6 +139,7 @@ class _SignUpBioScreenState extends State<SignUpBioScreen> with SignUpBioScreenL
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         InkWell(
+                          borderRadius: BorderRadius.circular(40),
                           onTap: () async {
                             imagePath = await selectImageFromGallery();
 
@@ -163,27 +165,31 @@ class _SignUpBioScreenState extends State<SignUpBioScreen> with SignUpBioScreenL
                         const SubTitleText(text: "Gallery",textColor: AppColor.kuWhite,fontSize: 14,)
                       ],
                     ),
-                    InkWell(
+                    Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children:[
+                        InkWell(
+                          /*borderRadius: BorderRadius.circular(40),
                       onTap: () async {
                         XFile imagepath = await selectImageFromCamera();
-                        log("$imagepath");
-                      },
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: const [
-                          CircleAvatar(
+                        log("$imagepath");*/
+                          borderRadius: BorderRadius.circular(40),
+                          onTap: () async {
+                            XFile imagepath = await selectImageFromCamera();
+                            log("$imagepath");},
+                          child: const CircleAvatar(
                             backgroundColor: AppColor.kuWhite,
                             backgroundImage:
                             AssetImage('assets/takepicture.png'),
                             maxRadius: 50,
                             minRadius: 40,
                           ),
-                          SizedBox(
-                            height: 10,
-                          ),
-                          SubTitleText(text: "Camera",fontSize: 14,textColor: AppColor.kuWhite,)
-                        ],
-                      ),
+                        ),
+                        SizedBox(
+                          height: 10,
+                        ),
+                        SubTitleText(text: "Camera",fontSize: 14,textColor: AppColor.kuWhite,)
+                      ],
                     )
                   ],
                 ),

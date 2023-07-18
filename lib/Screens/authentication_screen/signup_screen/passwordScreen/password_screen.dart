@@ -35,7 +35,7 @@ class _SignUpPasswordScreenState extends State<SignUpPasswordScreen>  with Passw
       body: CustomScrollView(
 
         slivers: [
-          const KuAppBar(kuTitle: "Sign Up", kuPath:"egg.png" ),
+          const KuAppBar(kuTitle: "Sign Up", kuPath:"kuback.png" ),
 
           SliverFillRemaining(
             hasScrollBody: false,

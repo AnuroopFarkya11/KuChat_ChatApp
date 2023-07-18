@@ -25,10 +25,7 @@ class _KuAppBarState extends State<KuAppBar> {
       // snap: true,
       expandedHeight: size.height * 0.3,
       leadingWidth: 25,
-      leading: Padding(
-        padding: const EdgeInsets.only(left: 5),
-        child: widget.autoLead?IconButton(icon: const Icon(Icons.arrow_back_ios),onPressed: (){ Navigator.pop(context);},):null,
-      ),
+      leading: widget.autoLead?IconButton(icon: const Icon(Icons.arrow_back_ios),onPressed: (){ Navigator.pop(context);},):null,
 
       title: Text(
         widget.kuTitle,
