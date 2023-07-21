@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:kuchat/Services/auth/firebase_auth_services.dart';
+import 'package:kuchat/Services/notification_manager/notifcation_manager.dart';
 import 'package:kuchat/Utils/theme_color/app_colors.dart';
 
 class KuDrawer extends StatefulWidget {
@@ -29,12 +30,17 @@ class _KuDrawerState extends State<KuDrawer> {
       ),
       title: Text(
         title,
-        style: const TextStyle(fontWeight: FontWeight.w500, fontSize: 14),
+        style: TextStyle(
+          fontWeight: FontWeight.w500,
+          fontSize: 15,
+        ),
       ),
       onTap: onTap,
       selected: selectedTileIndex == index,
+      textColor: Colors.white60,
       selectedColor: Colors.white,
       selectedTileColor: Colors.white10,
+      iconColor: AppColor.kuWhite70,
       // selectedTileColor: Colors.white10,
       // iconColor: Colors.white,
     );
@@ -85,9 +91,8 @@ class _KuDrawerState extends State<KuDrawer> {
               title: "Profile",
               onTap: () {
                 selectedTile(1);
-                
 
-               /* Navigator.pop(context);
+                /* Navigator.pop(context);
                 Navigator.pushNamedAndRemoveUntil(context, '/CurrentProfileScreen', (route){
                   selectedTileIndex =0;
                   return true;
@@ -128,7 +133,8 @@ class _KuDrawerState extends State<KuDrawer> {
               title: "Help or Support",
               onTap: () {
                 selectedTile(5);
-                Navigator.pushReplacementNamed(context, "/HelpAndSupportScreen");
+                Navigator.pushReplacementNamed(
+                    context, "/HelpAndSupportScreen");
               },
               index: 5),
 /*          listItem(
@@ -143,13 +149,13 @@ class _KuDrawerState extends State<KuDrawer> {
               title: "Logout",
               onTap: () {
                 selectedTile(6);
-                FirebaseAuthService().signOutUser(context).then((bool res){
-                  if(res)
-                    {
-                      Navigator.of(context).pop();
-                      Navigator.pushReplacementNamed(context, "/SignInScreen");
-                      selectedTileIndex =0;
-                    }
+                FirebaseAuthService().signOutUser(context).then((bool res) {
+                  if (res) {
+                    Navigator.of(context).pop();
+                    Navigator.pushReplacementNamed(context, "/SignInScreen");
+                    // NotificationManager.disableNotification();
+                    selectedTileIndex = 0;
+                  }
                 });
               },
               index: 6),
@@ -158,7 +164,8 @@ class _KuDrawerState extends State<KuDrawer> {
               title: "About Developer",
               onTap: () {
                 selectedTile(7);
-                Navigator.pushReplacementNamed(context, "/AboutDeveloperScreen");
+                Navigator.pushReplacementNamed(
+                    context, "/AboutDeveloperScreen");
               },
               index: 7),
         ],

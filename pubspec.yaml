@@ -55,6 +55,8 @@ dependencies:
   firebase_messaging: ^14.6.4
   flutter_notification_channel: ^2.0.0
   shared_preferences: ^2.2.0
+  photo_view: ^0.14.0
+  shimmer: ^3.0.0
 
 
 

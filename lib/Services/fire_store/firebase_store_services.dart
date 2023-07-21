@@ -77,23 +77,27 @@ class FireStoreServices {
 
   Future<Map<String, dynamic>?> getUserData(String userId) async {
     Map<String, dynamic>? userMap;
-    log("RETRIEVING DATA FOR UID:  $userId");
+    log(name:"GET USER DATA STATUS ","RETRIEVING DATA FOR UID:  $userId");
 
-    await _fireStore
-        .collection('KuChatsUsers')
-        .where("UserID", isEqualTo: userId)
-        .get()
-        .then((value) {
-      var size = value.size;
-      log("Got the match size:  $size");
+    try {
+      await _fireStore
+          .collection('KuChatsUsers')
+          .where("UserID", isEqualTo: userId)
+          .get()
+          .then((value) {
+        var size = value.size;
+        log(name:"GET USER DATA STATUS ","DATA RETRIEVED");
 
-      if (size == 1) {
-        userMap = value.docs[0].data();
-      } else {
-        log("User with UID: $userId is not available to the datastore");
-        userMap = null;
-      }
-    });
+        if (size == 1) {
+          userMap = value.docs[0].data();
+        } else {
+          log("User with UID: $userId is not available to the datastore");
+          userMap = null;
+        }
+      });
+    } on Exception catch (e) {
+      throw "Unable to fetch user data.";
+    }
     return userMap;
   }
 
@@ -257,8 +261,8 @@ class FireStoreServices {
   }
 
   Future<bool>updateProfileURL({required String url}) async {
-    String uid = _authService.getCurrentUserUID();
-
+    String uid = await _authService.getCurrentUserUID();
+    log(name: "USER PROFILE PICTURE URL UPDATE STATUS:",uid);
     try {
       await _fireStore
           .collection("KuChatsUsers")
@@ -267,7 +271,7 @@ class FireStoreServices {
       return true;
     } on FirebaseException catch (e) {
       // TODO
-      log("USER PROFILE PICTURE UPLOAD STATUS: ${e.message}");
+      log( name: "USER PROFILE PICTURE URL UPDATE STATUS:",e.message.toString());
       return false;
     }
   }
@@ -366,4 +370,8 @@ class FireStoreServices {
     }
     return profilePictureUrl;
   }
+
+
+
+
 }

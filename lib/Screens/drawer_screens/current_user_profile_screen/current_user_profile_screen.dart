@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'package:kuchat/Utils/theme_color/app_colors.dart';
 import 'package:kuchat/Widgets/get_image_from_source.dart';
+import 'package:kuchat/Widgets/snack_bar.dart';
 import 'package:provider/provider.dart';
 
 import '../../../Modals/user_modal.dart';
@@ -62,12 +63,15 @@ class _CurrentUserProfileScreenState extends State<CurrentUserProfileScreen>
                     // Navigator.pushNamed(context, "/BottomImageSource");
                     // context.read<UserModel>().downloadUrl="";
                     await getImage.getImageSource(context).then((value)async{
-                      loadingImage = true;
-                      setState(() {
-                      });
+
                       log(name:"IMAGE UPDATE TO CURRENT SCREEN STATUS",value);
+
                       if(value.isNotEmpty)
                         {
+                          showSnackBar(context, "Uploading your profile photo.");
+                          loadingImage = true;
+                          setState(() {
+                          });
                           await storeServices.startUploadImage(value).then((value)async{
                             await deleteProfileFilefromDevice().whenComplete((){
 
@@ -117,18 +121,25 @@ class _CurrentUserProfileScreenState extends State<CurrentUserProfileScreen>
                         ).createShader(bounds);
                       },
                       // todo 1
-                      child: CachedNetworkImage(
-                        placeholderFadeInDuration: const Duration(seconds: 2),
-                        fadeOutDuration: const Duration(seconds: 2),
-                        fadeInDuration: const Duration(seconds: 5),
-                        imageUrl: url,
-                        fit: BoxFit.fitWidth,
-                        errorWidget: (context, url, error) => Image.asset(
+                      child: GestureDetector(
+                        onTap: (){
+                          showDialog(context: context,barrierColor: Colors.black87, builder: (context){
+                            return Center(child:GestureDetector(child: CachedNetworkImage(imageUrl: url,)) );
+                          });
+                        },
+                        child: CachedNetworkImage(
+                          placeholderFadeInDuration: const Duration(seconds: 2),
+                          fadeOutDuration: const Duration(seconds: 2),
+                          fadeInDuration: const Duration(seconds: 5),
+                          imageUrl: url,
+                          fit: BoxFit.fitWidth,
+                          errorWidget: (context, url, error) => Image.asset(
+                              "assets/wallpaper.jpg",
+                              fit: BoxFit.fill),
+                          placeholder: (context, url) => Image.asset(
                             "assets/wallpaper.jpg",
-                            fit: BoxFit.fill),
-                        placeholder: (context, url) => Image.asset(
-                          "assets/wallpaper.jpg",
-                          fit: BoxFit.fill,
+                            fit: BoxFit.fill,
+                          ),
                         ),
                       )),
               titlePadding: const EdgeInsets.only(left: 12),

@@ -12,11 +12,12 @@ class SenderBubble extends StatefulWidget {
   final String text;
   final String senderUID;
   final String receiverUID;
+  final String time;
   //TODO MESSAGE TIME
   // late Timestamp? time;
 
 
-  SenderBubble({Key? key, required this.text,required this.senderUID,required this.receiverUID                                     }) : super(key: key);
+  const SenderBubble({Key? key, required this.text,required this.senderUID,required this.receiverUID,required this.time}) : super(key: key);
 
   @override
   State<SenderBubble> createState() => _SenderBubbleState();
@@ -38,6 +39,8 @@ class _SenderBubbleState extends State<SenderBubble> {
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
+
+    // log(name: "Sender Bubble", "${widget.time}");
 
 
     return Align(

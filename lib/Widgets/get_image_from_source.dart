@@ -25,6 +25,7 @@ class GetImage {
     required this.setState,
     required this.userUID,
   });
+
 /*
 * show modal bottom sheet
 * show two options: GALLERY AND CAMERA
@@ -44,7 +45,7 @@ class GetImage {
   final FireStoreServices _storeServices = FireStoreServices();
 
   Future<String> getImageSource(BuildContext context) async {
-    String imagePath= "";
+    String imagePath = "";
     await showModalBottomSheet(
         context: context,
         builder: (context) {
@@ -72,11 +73,10 @@ class GetImage {
                       InkWell(
                         onTap: () async {
                           try {
-                            await selectImageFromGallery()
-                                .then((value) async {
+                            await selectImageFromGallery().then((value) async {
                               if (value.isNotEmpty) {
                                 log("Select GalleryImage Status: $value");
-                                imagePath=value;
+                                imagePath = value;
                                 Navigator.of(context).pop();
 
                                 // setState();
@@ -110,10 +110,10 @@ class GetImage {
                   ),
                   InkWell(
                     onTap: () async {
-                      await selectImageFromCamera().then((value){
+                      await selectImageFromCamera().then((value) {
                         if (value.isNotEmpty) {
                           log("Select CameraImage Status: $value");
-                          imagePath=value;
+                          imagePath = value;
                           Navigator.of(context).pop();
 
                           // setState();
@@ -153,7 +153,7 @@ class GetImage {
             ],
           );
         });
-   return imagePath;
+    return imagePath;
   }
 
   Future selectImageFromGallery() async {
@@ -179,33 +179,35 @@ class GetImage {
 
   cropImage(File file) async {
     ImageCropper cropper = ImageCropper();
-    final cropperdFile = await cropper.cropImage(
+    final croppedFile = await cropper.cropImage(
         sourcePath: file.path,
         cropStyle: CropStyle.rectangle,
         aspectRatio: const CropAspectRatio(ratioX: 1, ratioY: 1),
-
+        aspectRatioPresets:[CropAspectRatioPreset.square],
+        compressQuality: 50,
         uiSettings: [
           AndroidUiSettings(
               toolbarTitle: "Crop Picture",
               toolbarColor: AppColor.kuGrey,
               toolbarWidgetColor: Colors.white,
-              initAspectRatio: CropAspectRatioPreset.original,
-              lockAspectRatio: false,
+              cropGridColor: AppColor.kuGrey,
+              initAspectRatio: CropAspectRatioPreset.square,
+              lockAspectRatio: true,
               activeControlsWidgetColor: AppColor.kuWhite),
           IOSUiSettings(
             title: "Image Cropper",
-            aspectRatioLockEnabled: false,
+            aspectRatioLockEnabled: true,
             hidesNavigationBar: true,
             doneButtonTitle: 'Chlo',
+
+
           )
         ]);
-    if (cropperdFile != null) {
+    if (croppedFile != null) {
       imageCache.clear();
-      return cropperdFile.path;
+      return croppedFile.path;
     }
   }
-
-
 
 /*  Future startUploadImage(imagePath) async {
     if (imagePath.isNotEmpty) {
@@ -226,7 +228,7 @@ class GetImage {
     }
   }*/
 
-  /*void pushPictureToStorage(imagePath) async {
+/*void pushPictureToStorage(imagePath) async {
     String currentUid = context.read<UserModel>().userId;
 
     await FirebaseStorageServices()

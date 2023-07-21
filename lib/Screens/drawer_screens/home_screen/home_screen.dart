@@ -13,6 +13,7 @@ import 'package:kuchat/Services/notification_manager/notifcation_manager.dart';
 import 'package:kuchat/Widgets/snack_bar.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
+import 'package:shimmer/shimmer.dart';
 
 import '../../../Modals/user_modal.dart';
 import '../../../Utils/theme_color/app_colors.dart';
@@ -42,15 +43,9 @@ class _HomeScreenState extends State<HomeScreen>
   void initState() {
     // TODO: implement initState
     super.initState();
-    url = context
-        .read<UserModel>()
-        .downloadUrl;
-    uid = context
-        .read<UserModel>()
-        .userId;
-    currentUID = context
-        .read<UserModel>()
-        .userId;
+    url = context.read<UserModel>().downloadUrl;
+    uid = context.read<UserModel>().userId;
+    currentUID = context.read<UserModel>().userId;
     log("Home Screen init");
     // currentUID = context.read<UserModel>().userId;
     // getUrl(context);
@@ -60,23 +55,20 @@ class _HomeScreenState extends State<HomeScreen>
     getImageFileFromUrl();
     updateToken();
 
-    WidgetsBinding.instance!.addObserver(this);
+    WidgetsBinding.instance.addObserver(this);
     _storeServices.setActiveStatus(true);
-
-
   }
-  updateToken()async{
-    await _storeServices.updateUserToken();
-}
 
+  updateToken() async {
+    await _storeServices.updateUserToken();
+  }
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     super.didChangeAppLifecycleState(state);
     if (state == AppLifecycleState.resumed) {
       _storeServices.setActiveStatus(true);
-    }
-    else {
+    } else {
       log("I am called while navigating");
       _storeServices.setActiveStatus(false);
     }
@@ -121,9 +113,7 @@ class _HomeScreenState extends State<HomeScreen>
 
   @override
   Widget build(BuildContext context) {
-    Size size = MediaQuery
-        .of(context)
-        .size;
+    Size size = MediaQuery.of(context).size;
     final fadeAnimation = CurvedAnimation(
       parent: animationController,
       curve: Curves.easeIn,
@@ -146,8 +136,8 @@ class _HomeScreenState extends State<HomeScreen>
               actions: [
                 IconButton(
                     onPressed: () async {
-                      showSnackBar(context, "KuChat Team is working on this feature.");
-                      
+                      showSnackBar(
+                          context, "KuChat Team is working on this feature.");
                     },
                     icon: const Icon(Icons.qr_code)),
                 const SizedBox(
@@ -157,7 +147,7 @@ class _HomeScreenState extends State<HomeScreen>
               flexibleSpace: FlexibleSpaceBar(
                 // centerTitle: true,
                 titlePadding:
-                const EdgeInsets.only(left: 10, bottom: 10, right: 10),
+                    const EdgeInsets.only(left: 10, bottom: 10, right: 10),
                 background: ShaderMask(
                     blendMode: BlendMode.hardLight,
                     shaderCallback: (Rect bounds) {
@@ -169,19 +159,23 @@ class _HomeScreenState extends State<HomeScreen>
                     },
                     child: imageDownloaded
                         ? FadeTransition(
-                        opacity: fadeAnimation,
-                        child: Image.file(
-                          userProfileFile,
-                          fit: BoxFit.fitWidth,
-                        ))
+                            opacity: fadeAnimation,
+                            child: Image.file(
+                              userProfileFile,
+                              fit: BoxFit.fitWidth,
+                            ))
                         : Image.asset(
-                      "assets/wallpaper.jpg",
-                      fit: BoxFit.fill,
-                    )),
-                title: Text(
-                  "Chats",
-                  textAlign: TextAlign.start,
-                  style: GoogleFonts.alata(fontSize: 20),
+                            "assets/wallpaper.jpg",
+                            fit: BoxFit.fill,
+                          )),
+
+                title: Padding(
+                  padding: const EdgeInsets.only(left: 35),
+                  child: Text(
+                    "Chats",
+                    textAlign: TextAlign.start,
+                    style: GoogleFonts.alata(fontSize: 20),
+                  ),
                 ),
               ),
             ),
@@ -222,7 +216,8 @@ class _HomeScreenState extends State<HomeScreen>
                               borderSide: const BorderSide(
                                   color: Colors.white, width: 1.5)),
                           labelText: "  Search",
-                          labelStyle: GoogleFonts.poppins(color: Colors.white70),
+                          labelStyle:
+                              GoogleFonts.poppins(color: Colors.white70),
                           suffixIcon: const Icon(Icons.search)),
                     ),
                     Divider(
@@ -242,12 +237,14 @@ class _HomeScreenState extends State<HomeScreen>
                     .doc(currentUID)
                     .collection("RecentChats")
                     .where("archived", isEqualTo: false)
-                    .where("blocked", isEqualTo: false).orderBy("time",descending: true)
+                    .where("blocked", isEqualTo: false)
+                    .orderBy("time", descending: true)
                     .snapshots(),
                 builder: (BuildContext context,
                     AsyncSnapshot<QuerySnapshot> snapshot) {
                   if (snapshot.hasData && snapshot.data!.docs.isNotEmpty) {
                     // log("Home screen:${snapshot.data!.docs.isEmpty}");
+                    // log(snapshot.data.docs.toString());
 
                     return getUserList(snapshot);
                   } else {
@@ -297,121 +294,163 @@ class _HomeScreenState extends State<HomeScreen>
         itemExtent: 85);
   }
 
-    getUserTile(AsyncSnapshot<QuerySnapshot<Object?>> snapshot,
-      BuildContext context) {
-    return snapshot.data!.docs
-        .map((doc) =>
-        ListTile(
-          // minVerticalPadding: 25.0,
+  getUserTile(
+      AsyncSnapshot<QuerySnapshot<Object?>> snapshot, BuildContext context) {
+    // fetch the user data using uid from ku chat user
+    // basically i need to fetch user profile and picture from kuchatuser
 
-          leading: CircleAvatar(
-            radius: 25,
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(55),
-              child: CachedNetworkImage(
-                imageUrl: doc["receiverPhoto"],
-                height: 60,
-                fit: BoxFit.fill,
-                width: 60,
-                placeholder: (context, val) {
-                  return CircleAvatar(
-                      backgroundColor: Colors.white70,
-                      backgroundImage: Image
-                          .asset(
-                        "assets/kuuuu/hello.png",
-                        fit: BoxFit.fitWidth,
-                      )
-                          .image);
-                },
+    return snapshot.data!.docs.map((doc) {
+      return StreamBuilder(
+          stream: FirebaseFirestore.instance
+              .collection("KuChatsUsers")
+              .doc(doc["receiverUID"])
+              .snapshots(),
+          builder: (context, userDataSnap) {
+            return userDataSnap.connectionState == ConnectionState.waiting
+                ? Shimmer.fromColors(baseColor: Colors.grey[400]!, highlightColor: Colors.grey[100]!, child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+
+                children: [
+
+                  Row(
+                    children: [
+                      const CircleAvatar(
+                        radius: 20,
+                      ),
+                      const SizedBox(width: 10,),
+                      Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Container(
+                            height: 10,width: 150,
+                            color: Colors.black54,
+                          ),const SizedBox(height: 10,),Container(
+                            height: 10,width: 70,
+                            color: Colors.black54,
+                          ),
+
+                        ],
+                      ),
+                    ],
+                  ),
+
+                  const CircleAvatar(radius: 7,)
+
+
+
+                ],
+
+
               ),
-            ),
-          ),
-          /*CircleAvatar(
+            ))
+                : ListTile(
+                    // minVerticalPadding: 25.0,
+
+                    leading: CircleAvatar(
+                      radius: 25,
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(55),
+                        child: CachedNetworkImage(
+                          imageUrl: userDataSnap.data?.get("ProfilePictureURL"),
+                          height: 60,
+                          fit: BoxFit.fill,
+                          width: 60,
+                          placeholder: (context, val) {
+                            return CircleAvatar(
+                                backgroundColor: Colors.white70,
+                                backgroundImage: Image.asset(
+                                  "assets/kuuuu/hello.png",
+                                  fit: BoxFit.fitWidth,
+                                ).image);
+                          },
+                        ),
+                      ),
+                    ),
+                    /*CircleAvatar(
 
                     backgroundImage: Image.network(doc["receiverPhoto"]).image,
                     radius: 25,
                   )*/
-          title: Text(
-            doc["receivedBy"],
-            style: GoogleFonts.poppins(color: Colors.white),
-          ),
-          subtitle: Text(
-            doc["lastMessage"],
-            style: GoogleFonts.poppins(color: Colors.white30),
-            softWrap: true,
-            maxLines: 1,
-          ),
-          trailing: StreamBuilder(
-            stream: FirebaseFirestore.instance.collection("KuChatsUsers").doc(
-                doc["receiverUID"]).snapshots(), builder: (context, snapshot) {
-              if(snapshot.hasData)
-                {
-                  bool activeStatus = snapshot.data!["activityStatus"];
-                  if(activeStatus)
-                    {
-                      return const Text("🟢");
-                    }
-                  else
-                    {
-                      return  const Text("🔴");
-                    }
-                }
-              else if(snapshot.hasError)
-                {
-                  return const Text("🔴");
-                }else if(snapshot.connectionState==ConnectionState.waiting)
-                  {
-                   return const Text("🔴");
-
-                  }
-              return const Text("🔴");
-
-
-          },),
-          onTap: () async {
-            // await FireStoreServices().checkStatus(doc["receiverUID"]);
-            leadToUser(context, doc["receiverUID"]);
-          },
-          onLongPress: () {
-            showDialog(
-                useSafeArea: true,
-                context: context,
-                builder: (context) {
-                  return SimpleDialog(
-                    children: [
-                      ListTile(
-                        leading: const Icon(Icons.archive_outlined),
-                        title: Text("Archive ${doc["receivedBy"]}"),
-                        iconColor: AppColor.kuWhite70,
-                        textColor: AppColor.kuWhite70,
-                        onTap: () {
-                          _storeServices.updateArchiveStatus(
-                              doc["receiverUID"], true);
-                          Navigator.of(context).pop();
-                        },
-                      ),
-                      const Divider(
-                        color: AppColor.kuWhite,
-                        indent: 65,
-                        endIndent: 65,
-                      ),
-                      ListTile(
-                        leading: const Icon(Icons.block),
-                        title: Text("Block ${doc["receivedBy"]}"),
-                        iconColor: AppColor.kuRed,
-                        textColor: AppColor.kuWhite70,
-                        onTap: () {
-                          _storeServices.updateBlockedStatus(
-                              doc["receiverUID"], true);
-                          Navigator.pop(context);
-                        },
-                      ),
-                    ],
+                    title: Text(
+                      userDataSnap.data?.get("Name"),
+                      style: GoogleFonts.poppins(color: Colors.white),
+                    ),
+                    subtitle: Text(
+                      doc["lastMessage"],
+                      style: GoogleFonts.poppins(color: Colors.white30),
+                      softWrap: true,
+                      maxLines: 1,
+                    ),
+                    trailing: StreamBuilder(
+                      stream: FirebaseFirestore.instance
+                          .collection("KuChatsUsers")
+                          .doc(doc["receiverUID"])
+                          .snapshots(),
+                      builder: (context, snapshot) {
+                        if (snapshot.hasData) {
+                          bool activeStatus = snapshot.data!["activityStatus"];
+                          if (activeStatus) {
+                            return const Text("🟢");
+                          } else {
+                            return const Text("🔴");
+                          }
+                        } else if (snapshot.hasError) {
+                          return const Text("🔴");
+                        } else if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          return const Text("🔴");
+                        }
+                        return const Text("🔴");
+                      },
+                    ),
+                    onTap: () async {
+                      // await FireStoreServices().checkStatus(doc["receiverUID"]);
+                      leadToUser(context, doc["receiverUID"]);
+                    },
+                    onLongPress: () {
+                      showDialog(
+                          useSafeArea: true,
+                          context: context,
+                          builder: (context) {
+                            return SimpleDialog(
+                              children: [
+                                ListTile(
+                                  leading: const Icon(Icons.archive_outlined),
+                                  title: Text("Archive ${doc["receivedBy"]}"),
+                                  iconColor: AppColor.kuWhite70,
+                                  textColor: AppColor.kuWhite70,
+                                  onTap: () {
+                                    _storeServices.updateArchiveStatus(
+                                        doc["receiverUID"], true);
+                                    Navigator.of(context).pop();
+                                  },
+                                ),
+                                const Divider(
+                                  color: AppColor.kuWhite,
+                                  indent: 65,
+                                  endIndent: 65,
+                                ),
+                                ListTile(
+                                  leading: const Icon(Icons.block),
+                                  title: Text("Block ${doc["receivedBy"]}"),
+                                  iconColor: AppColor.kuRed,
+                                  textColor: AppColor.kuWhite70,
+                                  onTap: () {
+                                    _storeServices.updateBlockedStatus(
+                                        doc["receiverUID"], true);
+                                    Navigator.pop(context);
+                                  },
+                                ),
+                              ],
+                            );
+                          });
+                    },
                   );
-                });
-          },
-        ))
-        .toList();
+          });
+    }).toList();
   }
 
   void leadToUser(context, String uid) async {
@@ -427,12 +466,8 @@ class _HomeScreenState extends State<HomeScreen>
   }
 
   String chatRoomID(String user1, String user2) {
-    if (user1[0]
-        .toLowerCase()
-        .codeUnits[0] >
-        user2[0]
-            .toLowerCase()
-            .codeUnits[0]) {
+    if (user1[0].toLowerCase().codeUnits[0] >
+        user2[0].toLowerCase().codeUnits[0]) {
       return '$user1$user2';
     } else {
       return '$user2$user1';

@@ -46,22 +46,24 @@ Future<void> main() async {
 }
 
 initializeNotificationChannel()async{
-  log("Notification bell status: ${SharedPreferenceManager.getNotificationPreferenceStatus()}");
-  bool? bell = SharedPreferenceManager.getNotificationPreferenceStatus();
-  if(bell == null)
+  // log("Notification bell status: ${SharedPreferenceManager.getNotificationPreferenceStatus()}");
+  // bool? bell = SharedPreferenceManager.getNotificationPreferenceStatus();
+  /*if(bell == null)
     {
       bell = true;
-    }
+    }*/
   var result = await FlutterNotificationChannel.registerNotificationChannel(
     description: 'Chat Notifications',
-    id: 'KuChat117',
+    id: 'KuChats117',
     importance: NotificationImportance.IMPORTANCE_HIGH,
     name: 'KuChats',
-    visibility: bell?NotificationVisibility.VISIBILITY_PUBLIC:NotificationVisibility.VISIBILITY_SECRET,
-    // allowBubbles: true,
-    // enableVibration: true,
-    // enableSound: true,
-    // showBadge: true,
+
+    visibility: NotificationVisibility.VISIBILITY_PUBLIC,
+    //true?NotificationVisibility.VISIBILITY_PUBLIC:NotificationVisibility.VISIBILITY_SECRET
+    allowBubbles: true,
+    enableVibration: true,
+    enableSound: true,
+    showBadge: true,
 
   );
   log("Notification Channel status: $result");
@@ -83,7 +85,7 @@ class _KuAppState extends State<KuApp> with WidgetsBindingObserver {
     log("Main INit");
     // TODO: implement initState
     super.initState();
-    WidgetsBinding.instance!.addObserver(this);
+    WidgetsBinding.instance.addObserver(this);
   }
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {

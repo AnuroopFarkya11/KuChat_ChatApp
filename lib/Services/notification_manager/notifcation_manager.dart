@@ -48,11 +48,12 @@ class NotificationManager{
     var url = Uri.parse("https://fcm.googleapis.com/fcm/send");
     final body = {
       "to":receiverTokenAddress,
+
       "notification": {
         "title": currentUserName, //current user name
         "body": message,
         "android_channel_id": "KuChats117",
-        "sound": "default"
+        // "sound": "default"
       },
     };
     try {
@@ -66,6 +67,33 @@ class NotificationManager{
     } on FirebaseException catch (e) {
       log("SENDING NOTIFICATION ERROR: ${e.message.toString()}");
     }
+  }
+
+
+  // static Future<void> disableNotification()
+  // async{
+  //
+  //   await firebaseMessaging.deleteToken().whenComplete((){
+  //
+  //     log(name:"Notification disables ","Notification token deleted");
+  //
+  //   });
+  //
+  //
+  // }
+
+  static Future<void> enableNotification()async{
+
+    /*await firebaseMessaging.getToken().then((value){
+      if(value!.isNotEmpty)
+      {
+        currentUserToken = value;
+        log("NOTIFICATION TOKEN STATUS: ${value}");
+      }
+    });
+*/
+
+
   }
 
 

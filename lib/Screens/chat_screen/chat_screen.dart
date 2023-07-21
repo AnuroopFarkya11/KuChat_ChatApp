@@ -98,7 +98,7 @@ class _ChatScreenState extends State<ChatScreen>
               floating: true,
               snap: true,
               elevation: 40,
-              backgroundColor: Colors.transparent,
+              backgroundColor: Colors.black54,
               shadowColor: Colors.white12,
               expandedHeight: size.height * 0.3,
               leading: IconButton(
@@ -162,42 +162,53 @@ class _ChatScreenState extends State<ChatScreen>
                           .snapshots(),
                       builder: (BuildContext context,
                           AsyncSnapshot<QuerySnapshot> snapshot) {
-                        if (snapshot.hasData) {
-                          if (snapshot.data!.size != 0) {
-                            return ListView.builder(
-                                reverse: true,
-                                // itemExtent: 50.0,
-                                itemCount: snapshot.data!.docs.length,
-                                itemBuilder: (context, count) {
-                                  Map<String, dynamic> messageMap =
-                                  snapshot.data!.docs[count].data()
-                                  as Map<String, dynamic>;
-                                  return bubbleMessage(
-                                      messageMap, currentUserName);
-                                });
-                          } else {
-                            return Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Image.asset(
-                                  "assets/kuuuu/mail.png",
-                                  height: 150,
-                                ),
-                                Text(
-                                  //todo add user name
-                                  "Say Hey to ${receiverUserName
-                                      .split(" ")
-                                      .first}!👋",
-                                  textAlign: TextAlign.center,
-                                  style: GoogleFonts.poppins(
-                                      color: Colors.white24,
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w400),
-                                )
-                              ],
-                            );
+                        if(snapshot.connectionState==ConnectionState.active)
+                          {
+                            if (snapshot.hasData) {
+                              if (snapshot.data!.size != 0) {
+                                return ListView.builder(
+                                    reverse: true,
+                                    // itemExtent: 50.0,
+                                    itemCount: snapshot.data!.docs.length,
+                                    itemBuilder: (context, count) {
+                                      Map<String, dynamic> messageMap =
+                                      snapshot.data!.docs[count].data()
+                                      as Map<String, dynamic>;
+                                      return bubbleMessage(
+                                          messageMap, currentUserName);
+                                    });
+                              } else {
+                                return Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Image.asset(
+                                      "assets/kuuuu/mail.png",
+                                      height: 150,
+                                    ),
+                                    Text(
+                                      //todo add user name
+                                      "Say Hey to ${receiverUserName
+                                          .split(" ")
+                                          .first}!👋",
+                                      textAlign: TextAlign.center,
+                                      style: GoogleFonts.poppins(
+                                          color: Colors.white24,
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.w400),
+                                    )
+                                  ],
+                                );
+                              }
+                            }
+                            else{
+                              showSnackBar(context, "Something went wrong!");
+                            }
                           }
+                        else{
+                          return const Center(child: CircularProgressIndicator(color: AppColor.kuWhite,),);
                         }
+                        return const Center(child: Text("Please contact to developer.\n YOu can report your issue through help and support feature."),);
+
                         /*if(!snapshot.hasData){
                           return Column(
                             mainAxisAlignment: MainAxisAlignment.center,
@@ -218,7 +229,7 @@ class _ChatScreenState extends State<ChatScreen>
                             ],
                           );
                         }*/
-                        return Container();
+
                       },
                     ),
                   ),
@@ -322,7 +333,7 @@ class _ChatScreenState extends State<ChatScreen>
       text: messageMap["message"],
       senderUID: messageMap["senderUID"],
       receiverUID: messageMap["receiverUID"],
-      // time: messageMap["time"],
+      time: messageMap["time"].toString(),
     )
         : ReceiverBubble(
       text: messageMap["message"],

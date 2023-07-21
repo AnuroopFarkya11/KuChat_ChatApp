@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:kuchat/Services/fire_store/firebase_store_services.dart';
+import 'package:kuchat/Services/notification_manager/notifcation_manager.dart';
 
 import '../../Widgets/snack_bar.dart';
 
@@ -58,6 +59,7 @@ class FirebaseAuthService {
     try {
       await _firebaseAuth.signInWithEmailAndPassword(
           email: email, password: password);
+      // await NotificationManager.getFirebaseNotificationToken();
       return true;
     } on FirebaseAuthException catch (e) {
       // log("Firebase login status : ${errore}");
