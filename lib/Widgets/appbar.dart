@@ -29,7 +29,7 @@ class _KuAppBarState extends State<KuAppBar> {
 
       title: Text(
         widget.kuTitle,
-        style: GoogleFonts.poppins(fontSize: widget.titleFontSize , fontWeight: FontWeight.w500),
+        style: GoogleFonts.poppins(fontSize: widget.titleFontSize , fontWeight: FontWeight.w500,color: Colors.white),
       ),
       flexibleSpace: LayoutBuilder(
         builder: (context, BoxConstraints constraints) {

@@ -30,12 +30,14 @@ import 'Screens/authentication_screen/signup_screen/passwordScreen/password_scre
 import 'Screens/chat_screen/chat_screen.dart';
 import 'Screens/drawer_screens/current_user_profile_screen/current_user_profile_screen.dart';
 import 'Screens/drawer_screens/home_screen/home_screen.dart';
+import 'firebase_options.dart';
 
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
-  await Firebase.initializeApp();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
   await SharedPreferenceManager.initializePreferences();
   await initializeNotificationChannel();
   await NotificationManager.getFirebaseNotificationToken();
@@ -83,7 +85,6 @@ class _KuAppState extends State<KuApp> with WidgetsBindingObserver {
   @override
   void initState() {
     log("Main INit");
-    // TODO: implement initState
     super.initState();
     WidgetsBinding.instance.addObserver(this);
   }
@@ -101,7 +102,6 @@ class _KuAppState extends State<KuApp> with WidgetsBindingObserver {
 
   @override
   void dispose() {
-    // TODO: implement dispose
     super.dispose();
     log("Main: disposed");
   }
