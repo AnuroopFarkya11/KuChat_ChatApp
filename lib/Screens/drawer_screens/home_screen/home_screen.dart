@@ -132,6 +132,9 @@ class _HomeScreenState extends State<HomeScreen>
               elevation: 50,
               backgroundColor: AppColor.kuGrey,
               expandedHeight: size.height * 0.3,
+              iconTheme: IconThemeData(
+                color: AppColor.kuWhite
+              ),
               // leading: IconButton(icon:Icon(Icons.menu),onPressed: (){},),
               actions: [
                 IconButton(
@@ -169,13 +172,11 @@ class _HomeScreenState extends State<HomeScreen>
                             fit: BoxFit.fill,
                           )),
 
-                title: Padding(
-                  padding: const EdgeInsets.only(left: 35),
-                  child: Text(
-                    "Chats",
-                    textAlign: TextAlign.start,
-                    style: GoogleFonts.alata(fontSize: 20),
-                  ),
+                title: Text(
+                  "Chats",
+                  textAlign: TextAlign.start,
+                  style: GoogleFonts.alata(fontSize: 20,color: AppColor.kuWhite),
+
                 ),
               ),
             ),

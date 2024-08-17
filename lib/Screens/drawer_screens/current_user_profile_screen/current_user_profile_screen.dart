@@ -150,6 +150,9 @@ class _CurrentUserProfileScreenState extends State<CurrentUserProfileScreen>
                     userName,
                     softWrap: true,
                     maxLines: 1,
+                    style: TextStyle(
+                      color: AppColor.kuWhite
+                    ),
                   ),
                   IconButton(
                       onPressed: () {

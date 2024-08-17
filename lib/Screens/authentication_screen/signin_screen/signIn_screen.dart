@@ -62,8 +62,8 @@ class _SignInScreenState extends State<SignInScreen> with SignInScreenLogic {
                   const SizedBox(
                     height: 20,
                   ),
-                  const TitleText(text:"Heyyyyyyiieee!!!!!" ),
-                  const SubTitleText(text: "Welcomeeeee Backkkk!! I was eagerly waiting for youuu!"),
+                  const TitleText(text:"Hello!" ),
+                  const SubTitleText(text: "Welcome! I was eagerly waiting for youuu!"),
 
 
                   const SizedBox(
@@ -71,7 +71,8 @@ class _SignInScreenState extends State<SignInScreen> with SignInScreenLogic {
                   ),
 
                   KuFormField(
-                    labelText: "Email Address",
+
+                    hintText: "Email Address",
                     formKey: emailKey,
                     textFormController: emailController,
                     formOnChanged: emailOnChanged,
@@ -83,7 +84,7 @@ class _SignInScreenState extends State<SignInScreen> with SignInScreenLogic {
                   ),
 
                   KuFormField(
-                    labelText: "Password",
+                    hintText: "Password",
                     formKey: passwordKey,
                     textFormController: passwordController,
                     obscureText: !isVisible,
