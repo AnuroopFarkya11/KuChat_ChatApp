@@ -1,5 +1,8 @@
 # KuChat
 https://github.com/AnuroopFarkya11/KuChat_ChatApp/blob/master/Kuchat.mp4
+
+[![Video](https://github.com/AnuroopFarkya11/KuChat_ChatApp/blob/master/Kuchat.mp4)](https://github.com/AnuroopFarkya11/KuChat_ChatApp/blob/master/Kuchat.mp4)
+
 # App Overview
 
 **Platform:** Flutter
