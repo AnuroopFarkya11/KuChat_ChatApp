@@ -1,6 +1,5 @@
 {
-  "project" : "Flutter App"
-
-
-  
+  "project" : "Flutter App",
+  "title" : "KuChat: YOur Messenger",
+  "description" : "My First Flutter Project."
 }
