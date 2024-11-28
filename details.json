@@ -3,6 +3,6 @@
   "title" : "KuChat: Your Messengerrrrrrr",
   "description" : "My First Flutter Project.",
   "projectLink" : "https://github.com/AnuroopFarkya11/KuChat_ChatApp",
-  "techUsed" : ["Flutter"]
+  "techUsed" : "["Flutter"]"
 
 }
