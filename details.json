@@ -3,7 +3,7 @@
   "title" : "KuChat",
   "description" : "My First Flutter Project.",
   "projectLink" : "https://github.com/AnuroopFarkya11/KuChat_ChatApp",
-  "appPhotos": "https://github.com/user-attachments/assets/345ece0f-d4d6-4ad6-8a11-d6eafb8bd8ba",
+  "appPhotos": "https://github-production-user-asset-6210df.s3.amazonaws.com/96327302/391322827-345ece0f-d4d6-4ad6-8a11-d6eafb8bd8ba.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAVCODYLSA53PQK4ZA%2F20241201%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20241201T105039Z&X-Amz-Expires=300&X-Amz-Signature=6eb2e901bcd472a51adccd0335242dd9f9107ccbc15c5b6e775df9f9d1f70cf7&X-Amz-SignedHeaders=host",
   "techUsed" : ["Flutter"]
 
 }
