@@ -1,4 +1,7 @@
 # KuChat
+
+![Kuchat (3)](https://github.com/user-attachments/assets/345ece0f-d4d6-4ad6-8a11-d6eafb8bd8ba)
+
 https://github.com/AnuroopFarkya11/KuChat_ChatApp/blob/master/Kuchat.mp4
 
 
